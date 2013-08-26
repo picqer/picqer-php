@@ -8,9 +8,11 @@ Information about our API can be found on [picqer.com/api](http://picqer.com/api
 ## Installation
 This project can easily be installed through Composer.
 
+```
   require: {
     "picqer/api-client": "dev-master"
   }
+```
 
 ## Examples
 Review the examples in the examples/ folder.
