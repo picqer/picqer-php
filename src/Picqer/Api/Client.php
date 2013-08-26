@@ -23,11 +23,11 @@ class Client
     protected $debug = false;
     protected $clientversion = '0.8';
 
-    public function __construct($company, $apikey = '')
+    public function __construct($company, $username = '', $password = 'X')
     {
         $this->company = $company;
-        $this->username = $apikey;
-        $this->password = 'X';
+        $this->username = $username;
+        $this->password = $password;
     }
 
     /*
