@@ -1,0 +1,320 @@
+<?php
+
+namespace Picqer\Api;
+
+/**
+ * Picqer PHP API Client
+ *
+ * @author Casper Bakker <support@picqer.com>
+ * @license http://creativecommons.org/licenses/MIT/ MIT
+ */
+
+class Client
+{
+    protected $company;
+    protected $username;
+    protected $password;
+
+    protected $apihost = 'picqer.com';
+    protected $protocol = 'https';
+    protected $apilocation = '/api';
+    protected $apiversion = 'v1';
+
+    protected $debug = false;
+    protected $clientversion = '0.8';
+
+    public function __construct($company, $apikey = '')
+    {
+        $this->company = $company;
+        $this->username = $apikey;
+        $this->password = 'X';
+    }
+
+    /*
+     * Customers
+     */
+    public function getCustomers($filters = array())
+    {
+        $result = $this->sendRequest('/customers', null, null, $filters);
+        return $result;
+    }
+
+    public function getAllCustomers($filters = array())
+    {
+        $gotAllCustomers = false;
+        $customers = array();
+        $i=0;
+        while ($gotAllCustomers == false) {
+            $filters['offset'] = ($i*100);
+            $result = $this->getCustomers($filters);
+            if ($result['success']) {
+                if (count($result['data']) < 100) {
+                    $gotAllCustomers = true;
+                }
+                foreach ($result['data'] as $customer) {
+                    $customers[] = $customer;
+                }
+                $i++;
+            } else {
+                return $result;
+            }
+        }
+        $result = array('success'=>true, 'data'=>$customers);
+        return $result;
+    }
+
+    public function getCustomer($idcustomer)
+    {
+        $result = $this->sendRequest('/customers/'.$idcustomer);
+        return $result;
+    }
+
+    public function addCustomer($params)
+    {
+        $result = $this->sendRequest('/customers', $params, 'POST');
+        return $result;
+    }
+
+    public function editCustomer($idcustomer, $params)
+    {
+        $result = $this->sendRequest('/customers/'.$idcustomer, $params, 'PUT');
+        return $result;
+    }
+
+    /*
+     * Products
+     */
+    public function getProducts($filters = array())
+    {
+        $endpoint = '/products';
+        $result = $this->sendRequest($endpoint, null, null, $filters);
+        return $result;
+    }
+
+    public function getAllProducts($filters = array())
+    {
+        $gotAllProducts = false;
+        $products = array();
+        $i=0;
+        while ($gotAllProducts == false) {
+            $filters['offset'] = ($i*100);
+            $result = $this->getProducts($filters);
+            if ($result['success']) {
+                if (count($result['data']) < 100) {
+                    $gotAllProducts = true;
+                }
+                foreach ($result['data'] as $product) {
+                    $products[] = $product;
+                }
+                $i++;
+            } else {
+                return $result;
+            }
+        }
+        $result = array('success'=>true, 'data'=>$products);
+        return $result;
+    }
+
+    public function getProduct($idproduct)
+    {
+        $result = $this->sendRequest('/products/'.$idproduct);
+        return $result;
+    }
+
+    public function addProduct($params)
+    {
+        $result = $this->sendRequest('/products', $params, 'POST');
+        return $result;
+    }
+
+    /*
+     * Orders
+     */
+    public function getOrders($filters = array())
+    {
+        $result = $this->sendRequest('/orders', null, null, $filters);
+        return $result;
+    }
+
+    public function getAllOrders($filters = array())
+    {
+        $gotAllOrders = false;
+        $orders = array();
+        $i=0;
+        while ($gotAllOrders == false) {
+            $filters['offset'] = ($i*100);
+            $result = $this->getOrders($filters);
+            if ($result['success']) {
+                if (count($result['data']) < 100) {
+                    $gotAllOrders = true;
+                }
+                foreach ($result['data'] as $order) {
+                    $orders[] = $order;
+                }
+                $i++;
+            } else {
+                return $result;
+            }
+        }
+        $result = array('success'=>true, 'data'=>$orders);
+        return $result;
+    }
+
+    public function getOrder($idorder)
+    {
+        $result = $this->sendRequest('/orders/'.$idorder);
+        return $result;
+    }
+
+    public function addOrder($params)
+    {
+        $result = $this->sendRequest('/orders', $params, 'POST');
+        return $result;
+    }
+
+    public function closeOrder($idorder)
+    {
+        $result = $this->sendRequest('/orders/'.$idorder.'/close', null, 'POST');
+        return $result;
+    }
+
+
+    /*
+     * Suppliers
+     */
+    public function getSuppliers()
+    {
+        $result = $this->sendRequest('/suppliers');
+        return $result;
+    }
+
+    public function getSupplier($idsupplier)
+    {
+        $result = $this->sendRequest('/suppliers/'.$idsupplier);
+        return $result;
+    }
+
+    /*
+     * Tags
+     */
+    public function getTags()
+    {
+        $result = $this->sendRequest('/tags');
+        return $result;
+    }
+
+    public function getTag($idtag)
+    {
+        $result = $this->sendRequest('/tags/'.$idtag);
+        return $result;
+    }
+
+    /*
+     * VAT Groups
+     */
+    public function getVatgroups()
+    {
+        $result = $this->sendRequest('/vatgroups');
+        return $result;
+    }
+
+    public function getVatgroup($idvatgroup)
+    {
+        $result = $this->sendRequest('/vatgroups/'.$idvatgroup);
+        return $result;
+    }
+
+    /**
+     * Creates a new company account for Picqer
+     * @param $params
+     * @return mixed
+     */
+    public function addCompany($params)
+    {
+        $result = $this->sendRequest('/companies', $params, 'POST');
+        return $result;
+    }
+
+    public function enableDebugmode()
+    {
+        $this->debug = true;
+    }
+
+    protected function sendRequest($endpoint, $params=array(), $method='GET', $filters = array())
+    {
+        $ch = curl_init();
+
+        if (!empty($filters)) {
+            $i=0;
+            foreach ($filters as $key => $value) {
+                if ($i==0) {
+                    $endpoint .= '?';
+                } else {
+                    $endpoint .= '&';
+                }
+                $endpoint .= $key.'='.urlencode($value);
+                $i++;
+            }
+        }
+
+        if ($this->debug) {
+            echo 'URL: '.$this->getUrl($endpoint).PHP_EOL;
+        }
+
+        curl_setopt($ch, CURLOPT_URL, $this->getUrl($endpoint));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->username.':'.$this->password);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Picqer PHP API Client '.$this->clientversion.' (www.picqer.com)');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','Accept: application/json'));
+        if ($method == 'POST' || $method == 'PUT') {
+            $data = $this->prepareData($params);
+            if ($this->debug) {
+                echo 'Data: '.$data.PHP_EOL;
+            }
+            if ($method == 'POST') {
+                curl_setopt($ch, CURLOPT_POST, true);
+            } elseif ($method == 'PUT') {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            }
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        }
+
+        $apiresult = curl_exec($ch);
+        $headerinfo = curl_getinfo($ch);
+
+        if ($this->debug) {
+            echo 'Raw result: '.$apiresult.PHP_EOL;
+        }
+
+        curl_close($ch);
+        $apiresult_json = json_decode($apiresult, true);
+
+        $result = array();
+        if (!in_array($headerinfo['http_code'], array('200','201','204'))) {
+            $result['error'] = true;
+            $result['errorcode'] = $headerinfo['http_code'];
+            if (isset($apiresult)) {
+                $result['errormessage'] = $apiresult;
+            }
+        } else {
+            $result['success'] = true;
+            $result['data'] = (($apiresult_json==null)?$apiresult:$apiresult_json);
+        }
+
+        return $result;
+    }
+
+    protected function getUrl($endpoint)
+    {
+        return $this->protocol.'://'.$this->company.'.'.$this->apihost.$this->apilocation.'/'.$this->apiversion.$endpoint;
+    }
+
+    protected function prepareData($params)
+    {
+        $data = json_encode($params);
+        return $data;
+    }
+}
