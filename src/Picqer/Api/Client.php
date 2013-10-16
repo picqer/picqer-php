@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.8';
+    protected $clientversion = '0.9';
 
     public function __construct($company, $username = '', $password = 'X')
     {
@@ -223,6 +223,31 @@ class Client
         $result = $this->sendRequest('/vatgroups/'.$idvatgroup);
         return $result;
     }
+
+    /*
+     * Hooks
+     */
+    public function addHook($params)
+    {
+        $result = $this->sendRequest('/hooks', $params, 'POST');
+        return $result;
+    }
+
+    public function getHooks()
+    {
+        $result = $this->sendRequest('/hooks');
+        return $result;
+    }
+
+    public function getHook($id)
+    {
+        $result = $this->sendRequest('/hooks/'.$id);
+        return $result;
+    }
+
+    /*
+     * General
+     */
 
     /**
      * Creates a new company account for Picqer
