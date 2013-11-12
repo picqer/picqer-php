@@ -23,6 +23,8 @@ class Client
     protected $debug = false;
     protected $clientversion = '0.9';
 
+    protected $skipverification = false;
+
     public function __construct($company, $username = '', $password = 'X')
     {
         $this->company = $company;
@@ -305,6 +307,10 @@ class Client
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
             }
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        }
+
+        if ($this->skipverification) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         }
 
         $apiresult = curl_exec($ch);
