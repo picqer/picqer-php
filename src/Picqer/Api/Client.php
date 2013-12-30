@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9';
+    protected $clientversion = '0.9.1';
 
     protected $skipverification = false;
 
@@ -311,6 +311,7 @@ class Client
 
         if ($this->skipverification) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
 
         $apiresult = curl_exec($ch);
