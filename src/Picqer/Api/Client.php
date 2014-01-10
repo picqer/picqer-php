@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.1';
+    protected $clientversion = '0.9.2';
 
     protected $skipverification = false;
 
@@ -326,6 +326,7 @@ class Client
 
         $result = array();
         if (!in_array($headerinfo['http_code'], array('200','201','204'))) {
+            $result['success'] = false;
             $result['error'] = true;
             $result['errorcode'] = $headerinfo['http_code'];
             if (isset($apiresult)) {
