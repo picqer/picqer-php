@@ -180,6 +180,56 @@ class Client
         return $result;
     }
 
+    /*
+     * Orders
+     */
+    public function getPicklists($filters = array())
+    {
+        $result = $this->sendRequest('/picklists', null, null, $filters);
+        return $result;
+    }
+
+    public function getAllPicklists($filters = array())
+    {
+        $gotAllPicklists = false;
+        $picklists = array();
+        $i=0;
+        while ($gotAllPicklists == false) {
+            $filters['offset'] = ($i*100);
+            $result = $this->getPicklists($filters);
+            if ($result['success']) {
+                if (count($result['data']) < 100) {
+                    $gotAllPicklists = true;
+                }
+                foreach ($result['data'] as $picklist) {
+                    $picklists[] = $picklist;
+                }
+                $i++;
+            } else {
+                return $result;
+            }
+        }
+        $result = array('success'=>true, 'data'=>$picklists);
+        return $result;
+    }
+
+    public function getPicklist($idpicklist)
+    {
+        $result = $this->sendRequest('/picklists/'.$idpicklist);
+        return $result;
+    }
+
+    public function closePicklist($idpicklist)
+    {
+        $result = $this->sendRequest('/picklists/'.$idpicklist.'/close', null, 'POST');
+        return $result;
+    }
+
+    public function pickallPicklist($idpicklist)
+    {
+        $result = $this->sendRequest('/picklists/'.$idpicklist.'/pickall', null, 'POST');
+        return $result;
+    }
 
     /*
      * Suppliers
