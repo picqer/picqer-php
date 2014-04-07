@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.2';
+    protected $clientversion = '0.9.3';
 
     protected $skipverification = false;
 
@@ -123,6 +123,15 @@ class Client
         return $result;
     }
 
+    public function getProductByProductcode($productcode)
+    {
+        $result = $this->sendRequest('/products?productcode='.$productcode);
+        if (count($result['data']) == 1) {
+            $result['data'] = $result['data'][0];
+        }
+        return $result;
+    }
+
     public function addProduct($params)
     {
         $result = $this->sendRequest('/products', $params, 'POST');
@@ -165,6 +174,15 @@ class Client
     public function getOrder($idorder)
     {
         $result = $this->sendRequest('/orders/'.$idorder);
+        return $result;
+    }
+
+    public function getOrderByOrderid($orderid)
+    {
+        $result = $this->sendRequest('/orders?orderid='.$orderid);
+        if (count($result['data']) == 1) {
+            $result['data'] = $result['data'][0];
+        }
         return $result;
     }
 
@@ -219,6 +237,15 @@ class Client
         return $result;
     }
 
+    public function getPicklistByPicklistid($picklistid)
+    {
+        $result = $this->sendRequest('/picklists?picklistid='.$picklistid);
+        if (count($result['data']) == 1) {
+            $result['data'] = $result['data'][0];
+        }
+        return $result;
+    }
+
     public function closePicklist($idpicklist)
     {
         $result = $this->sendRequest('/picklists/'.$idpicklist.'/close', null, 'POST');
@@ -249,6 +276,27 @@ class Client
     public function getSupplier($idsupplier)
     {
         $result = $this->sendRequest('/suppliers/'.$idsupplier);
+        return $result;
+    }
+
+    /*
+     * Purchase orders
+     */
+    public function getPurchaseorders()
+    {
+        $result = $this->sendRequest('/purchaseorders');
+        return $result;
+    }
+
+    public function getPurchaseorder($idpurchaseorder)
+    {
+        $result = $this->sendRequest('/purchaseorders/'.$idpurchaseorder);
+        return $result;
+    }
+
+    public function receivePurchaseorderProduct($idpurchaseorder, $params)
+    {
+        $result = $this->sendRequest('/purchaseorders/'.$idpurchaseorder.'/receive', $params, 'POST');
         return $result;
     }
 
