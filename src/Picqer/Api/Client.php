@@ -231,6 +231,12 @@ class Client
         return $result;
     }
 
+    public function createShipment($idpicklist, $params)
+    {
+        $result = $this->sendRequest('/picklists/'.$idpicklist.'/shipments', $params, 'POST');
+        return $result;
+    }
+
     /*
      * Suppliers
      */
