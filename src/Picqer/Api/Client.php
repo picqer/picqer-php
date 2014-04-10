@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.3';
+    protected $clientversion = '0.9.4';
 
     protected $skipverification = false;
 
@@ -126,8 +126,10 @@ class Client
     public function getProductByProductcode($productcode)
     {
         $result = $this->sendRequest('/products?productcode='.$productcode);
-        if (count($result['data']) == 1) {
+        if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
+        } else {
+            $result = null;
         }
         return $result;
     }
@@ -135,6 +137,24 @@ class Client
     public function addProduct($params)
     {
         $result = $this->sendRequest('/products', $params, 'POST');
+        return $result;
+    }
+
+    public function getProductStock($idproduct)
+    {
+        $result = $this->sendRequest('/products/'.$idproduct.'/stock');
+        return $result;
+    }
+
+    public function getProductStockForWarehouse($idproduct, $idwarehouse)
+    {
+        $result = $this->sendRequest('/products/'.$idproduct.'/stock/'.$idwarehouse);
+        return $result;
+    }
+
+    public function updateProductStockForWarehouse($idproduct, $idwarehouse, $params)
+    {
+        $result = $this->sendRequest('/products/'.$idproduct.'/stock/'.$idwarehouse, $params, 'POST');
         return $result;
     }
 
