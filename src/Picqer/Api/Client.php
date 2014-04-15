@@ -372,6 +372,16 @@ class Client
     }
 
     /*
+     * Backorders
+     */
+    public function processBackorders()
+    {
+        $result = $this->sendRequest('/backorders/process', null, 'POST');
+        return $result;
+    }
+
+
+    /*
      * General
      */
 
