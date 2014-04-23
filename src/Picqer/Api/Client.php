@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.4';
+    protected $clientversion = '0.9.5';
 
     protected $skipverification = false;
 
@@ -468,7 +468,7 @@ class Client
             }
         } else {
             $result['success'] = true;
-            $result['data'] = (($apiresult_json==null)?$apiresult:$apiresult_json);
+            $result['data'] = (($apiresult_json===null)?$apiresult:$apiresult_json);
         }
 
         return $result;
