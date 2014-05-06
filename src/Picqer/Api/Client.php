@@ -21,7 +21,7 @@ class Client
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.5';
+    protected $clientversion = '0.9.6';
 
     protected $skipverification = false;
 
@@ -68,6 +68,17 @@ class Client
     public function getCustomer($idcustomer)
     {
         $result = $this->sendRequest('/customers/'.$idcustomer);
+        return $result;
+    }
+
+    public function getCustomerByCustomerid($customerid)
+    {
+        $result = $this->sendRequest('/customers?customerid='.$customerid);
+        if (is_array($result['data']) && count($result['data']) == 1) {
+            $result['data'] = $result['data'][0];
+        } else {
+            $result = null;
+        }
         return $result;
     }
 
