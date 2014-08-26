@@ -73,7 +73,7 @@ class Client
 
     public function getCustomerByCustomerid($customerid)
     {
-        $result = $this->sendRequest('/customers?customerid='.$customerid);
+        $result = $this->sendRequest('/customers?customerid=' . urlencode($customerid));
         if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         } else {
@@ -136,7 +136,7 @@ class Client
 
     public function getProductByProductcode($productcode)
     {
-        $result = $this->sendRequest('/products?productcode='.$productcode);
+        $result = $this->sendRequest('/products?productcode=' . urlencode($productcode));
         if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         } else {
@@ -210,7 +210,7 @@ class Client
 
     public function getOrderByOrderid($orderid)
     {
-        $result = $this->sendRequest('/orders?orderid='.$orderid);
+        $result = $this->sendRequest('/orders?orderid=' . urlencode($orderid));
         if (count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         }
@@ -270,7 +270,7 @@ class Client
 
     public function getPicklistByPicklistid($picklistid)
     {
-        $result = $this->sendRequest('/picklists?picklistid='.$picklistid);
+        $result = $this->sendRequest('/picklists?picklistid=' . urlencode($picklistid));
         if (count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         }
