@@ -20,7 +20,7 @@ class Client {
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.7';
+    protected $clientversion = '0.9.8';
 
     protected $skipverification = false;
 
@@ -416,6 +416,20 @@ class Client {
         return $result;
     }
 
+    /*
+     * Warehouses
+     */
+    public function getWarehouses()
+    {
+        $result = $this->sendRequest('/warehouses');
+        return $result;
+    }
+
+    public function getWarehouse($idwarehouse)
+    {
+        $result = $this->sendRequest('/warehouses/' . $idwarehouse);
+        return $result;
+    }
 
     /*
      * General
