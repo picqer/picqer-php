@@ -20,7 +20,7 @@ class Client {
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.8';
+    protected $clientversion = '0.9.9';
 
     protected $skipverification = false;
 
@@ -245,6 +245,28 @@ class Client {
     public function closeOrder($idorder)
     {
         $result = $this->sendRequest('/orders/' . $idorder . '/close', null, 'POST');
+        return $result;
+    }
+
+    public function getOrderTags($idorder)
+    {
+        $result = $this->sendRequest('/orders/' . $idorder . '/tags');
+        return $result;
+    }
+
+    public function addOrderTag($idorder, $idtag)
+    {
+        $params = array(
+            'idtag' => $idtag
+        );
+
+        $result = $this->sendRequest('/orders/' . $idorder . '/tags' , $params, 'POST');
+        return $result;
+    }
+
+    public function removeOrderTag($idorder, $idtag)
+    {
+        $result = $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), 'DELETE');
         return $result;
     }
 
@@ -485,7 +507,7 @@ class Client {
         curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->password);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Picqer PHP API Client ' . $this->clientversion . ' (www.picqer.com)');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
-        if ($method == 'POST' || $method == 'PUT')
+        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE')
         {
             $data = $this->prepareData($params);
             if ($this->debug)
@@ -498,6 +520,9 @@ class Client {
             } elseif ($method == 'PUT')
             {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            } elseif ($method == 'DELETE')
+            {
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
             }
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
