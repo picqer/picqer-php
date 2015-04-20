@@ -20,7 +20,7 @@ class Client {
     protected $apiversion = 'v1';
 
     protected $debug = false;
-    protected $clientversion = '0.9.9';
+    protected $clientversion = '0.9.10';
 
     protected $skipverification = false;
 
@@ -42,31 +42,7 @@ class Client {
 
     public function getAllCustomers($filters = array())
     {
-        $gotAllCustomers = false;
-        $customers = array();
-        $i = 0;
-        while ($gotAllCustomers == false)
-        {
-            $filters['offset'] = ($i * 100);
-            $result = $this->getCustomers($filters);
-            if ($result['success'])
-            {
-                if (count($result['data']) < 100)
-                {
-                    $gotAllCustomers = true;
-                }
-                foreach ($result['data'] as $customer)
-                {
-                    $customers[] = $customer;
-                }
-                $i++;
-            } else
-            {
-                return $result;
-            }
-        }
-        $result = array('success' => true, 'data' => $customers);
-        return $result;
+        return $this->getAllResults('customer', $filters);
     }
 
     public function getCustomer($idcustomer)
@@ -112,31 +88,7 @@ class Client {
 
     public function getAllProducts($filters = array())
     {
-        $gotAllProducts = false;
-        $products = array();
-        $i = 0;
-        while ($gotAllProducts == false)
-        {
-            $filters['offset'] = ($i * 100);
-            $result = $this->getProducts($filters);
-            if ($result['success'])
-            {
-                if (count($result['data']) < 100)
-                {
-                    $gotAllProducts = true;
-                }
-                foreach ($result['data'] as $product)
-                {
-                    $products[] = $product;
-                }
-                $i++;
-            } else
-            {
-                return $result;
-            }
-        }
-        $result = array('success' => true, 'data' => $products);
-        return $result;
+        return $this->getAllResults('product', $filters);
     }
 
     public function getProduct($idproduct)
@@ -193,31 +145,7 @@ class Client {
 
     public function getAllOrders($filters = array())
     {
-        $gotAllOrders = false;
-        $orders = array();
-        $i = 0;
-        while ($gotAllOrders == false)
-        {
-            $filters['offset'] = ($i * 100);
-            $result = $this->getOrders($filters);
-            if ($result['success'])
-            {
-                if (count($result['data']) < 100)
-                {
-                    $gotAllOrders = true;
-                }
-                foreach ($result['data'] as $order)
-                {
-                    $orders[] = $order;
-                }
-                $i++;
-            } else
-            {
-                return $result;
-            }
-        }
-        $result = array('success' => true, 'data' => $orders);
-        return $result;
+        return $this->getAllResults('order', $filters);
     }
 
     public function getOrder($idorder)
@@ -260,7 +188,7 @@ class Client {
             'idtag' => $idtag
         );
 
-        $result = $this->sendRequest('/orders/' . $idorder . '/tags' , $params, 'POST');
+        $result = $this->sendRequest('/orders/' . $idorder . '/tags', $params, 'POST');
         return $result;
     }
 
@@ -281,31 +209,7 @@ class Client {
 
     public function getAllPicklists($filters = array())
     {
-        $gotAllPicklists = false;
-        $picklists = array();
-        $i = 0;
-        while ($gotAllPicklists == false)
-        {
-            $filters['offset'] = ($i * 100);
-            $result = $this->getPicklists($filters);
-            if ($result['success'])
-            {
-                if (count($result['data']) < 100)
-                {
-                    $gotAllPicklists = true;
-                }
-                foreach ($result['data'] as $picklist)
-                {
-                    $picklists[] = $picklist;
-                }
-                $i++;
-            } else
-            {
-                return $result;
-            }
-        }
-        $result = array('success' => true, 'data' => $picklists);
-        return $result;
+        return $this->getAllResults('picklist', $filters);
     }
 
     public function getPicklist($idpicklist)
@@ -456,6 +360,37 @@ class Client {
     /*
      * General
      */
+    public function getAllResults($entity, $filters = array())
+    {
+        $gotAll = false;
+        $collection = array();
+
+        $functionname = 'get' . ucfirst($entity) . 's';
+
+        $i = 0;
+        while ($gotAll == false)
+        {
+            $filters['offset'] = ($i * 100);
+            $result = $this->$functionname($filters);
+            if (isset($result['success']) && $result['success'] && isset($result['data']))
+            {
+                if (count($result['data']) < 100)
+                {
+                    $gotAll = true;
+                }
+                foreach ($result['data'] as $item)
+                {
+                    $collection[] = $item;
+                }
+                $i++;
+            } else
+            {
+                return $result;
+            }
+        }
+        $result = array('success' => true, 'data' => $collection);
+        return $result;
+    }
 
     /**
      * Creates a new company account for Picqer
@@ -477,22 +412,7 @@ class Client {
     {
         $ch = curl_init();
 
-        if (!empty($filters))
-        {
-            $i = 0;
-            foreach ($filters as $key => $value)
-            {
-                if ($i == 0)
-                {
-                    $endpoint .= '?';
-                } else
-                {
-                    $endpoint .= '&';
-                }
-                $endpoint .= $key . '=' . urlencode($value);
-                $i++;
-            }
-        }
+        $endpoint = $this->getEndpoint($endpoint, $filters);
 
         if ($this->debug)
         {
@@ -501,19 +421,20 @@ class Client {
 
         curl_setopt($ch, CURLOPT_URL, $this->getUrl($endpoint));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->password);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Picqer PHP API Client ' . $this->clientversion . ' (www.picqer.com)');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
+
         if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE')
         {
             $data = $this->prepareData($params);
+
             if ($this->debug)
-            {
                 echo 'Data: ' . $data . PHP_EOL;
-            }
+
             if ($method == 'POST')
             {
                 curl_setopt($ch, CURLOPT_POST, true);
@@ -537,24 +458,32 @@ class Client {
         $headerinfo = curl_getinfo($ch);
 
         if ($this->debug)
-        {
             echo 'Raw result: ' . $apiresult . PHP_EOL;
-        }
 
-        curl_close($ch);
         $apiresult_json = json_decode($apiresult, true);
 
         $result = array();
-        if (!in_array($headerinfo['http_code'], array('200', '201', '204')))
+        $result['success'] = false;
+
+        if ($apiresult === false) // CURL failed
         {
-            $result['success'] = false;
+            $result['error'] = true;
+            $result['errorcode'] = 0;
+            $result['errormessage'] = curl_error($ch);
+            return $result;
+        }
+
+        curl_close($ch);
+
+        if ( ! in_array($headerinfo['http_code'], array('200', '201', '204'))) // API returns error
+        {
             $result['error'] = true;
             $result['errorcode'] = $headerinfo['http_code'];
             if (isset($apiresult))
             {
                 $result['errormessage'] = $apiresult;
             }
-        } else
+        } else // API returns success
         {
             $result['success'] = true;
             $result['data'] = (($apiresult_json === null) ? $apiresult : $apiresult_json);
@@ -572,5 +501,27 @@ class Client {
     {
         $data = json_encode($params);
         return $data;
+    }
+
+    protected function getEndpoint($endpoint, $filters)
+    {
+        if ( ! empty($filters))
+        {
+            $i = 0;
+            foreach ($filters as $key => $value)
+            {
+                if ($i == 0)
+                {
+                    $endpoint .= '?';
+                } else
+                {
+                    $endpoint .= '&';
+                }
+                $endpoint .= $key . '=' . urlencode($value);
+                $i++;
+            }
+        }
+
+        return $endpoint;
     }
 }
