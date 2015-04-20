@@ -10,7 +10,7 @@ This project can easily be installed through Composer.
 
 ```
   require: {
-    "picqer/api-client": "dev-master"
+    "picqer/api-client": "~0.9"
   }
 ```
 
