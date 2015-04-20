@@ -220,7 +220,7 @@ class Client {
 
     public function getPicklistByPicklistid($picklistid)
     {
-        $result = $this->sendRequest('/picklists?picklistid=' . urlencode($picklistid));
+        $result = $this->sendRequest('/picklists/' . $picklistid);
         if (count($result['data']) == 1)
         {
             $result['data'] = $result['data'][0];
