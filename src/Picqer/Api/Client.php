@@ -333,6 +333,12 @@ class Client {
         return $result;
     }
 
+    public function deleteHook($id)
+    {
+        $result = $this->sendRequest('/hooks/' . $id, array(), 'DELETE');
+        return $result;
+    }
+
     /*
      * Backorders
      */
