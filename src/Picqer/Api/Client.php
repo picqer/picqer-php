@@ -414,6 +414,11 @@ class Client {
         $this->debug = true;
     }
 
+    public function enableSkipVerification()
+    {
+        $this->skipverification = true;
+    }
+
     protected function sendRequest($endpoint, $params = array(), $method = 'GET', $filters = array())
     {
         $ch = curl_init();
