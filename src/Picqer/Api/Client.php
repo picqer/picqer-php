@@ -18,11 +18,14 @@ class Client {
     protected $protocol = 'https';
     protected $apilocation = '/api';
     protected $apiversion = 'v1';
+    protected $useragent = 'Picqer PHP API Client (picqer.com)';
+
+    protected $clientversion = '0.10.0';
 
     protected $debug = false;
-    protected $clientversion = '0.9.10';
-
     protected $skipverification = false;
+
+    protected $timeoutInSeconds = 60;
 
     public function __construct($company, $username = '', $password = 'X')
     {
@@ -409,14 +412,53 @@ class Client {
         return $result;
     }
 
+    /**
+     * Enable debug mode gives verbose output on requests and responses
+     */
     public function enableDebugmode()
     {
         $this->debug = true;
     }
 
-    public function enableSkipVerification()
+    /**
+     * Disable Curl's SSL verification for testing
+     */
+    public function disableSslVerification()
     {
         $this->skipverification = true;
+    }
+
+    /**
+     * @param string $apihost
+     */
+    public function setApihost($apihost)
+    {
+        $this->apihost = $apihost;
+    }
+
+    /**
+     * @param string $protocol http or https
+     */
+    public function setProtocol($protocol)
+    {
+        $this->protocol = $protocol;
+    }
+
+    /**
+     * @param string $useragent
+     */
+    public function setUseragent($useragent)
+    {
+        $this->useragent = $useragent;
+    }
+
+    /**
+     * Change the timeout for CURL requests
+     * @param int $timeoutInSeconds
+     */
+    public function setTimeoutInSeconds($timeoutInSeconds)
+    {
+        $this->timeoutInSeconds = $timeoutInSeconds;
     }
 
     protected function sendRequest($endpoint, $params = array(), $method = 'GET', $filters = array())
@@ -432,11 +474,11 @@ class Client {
 
         curl_setopt($ch, CURLOPT_URL, $this->getUrl($endpoint));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->password);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Picqer PHP API Client ' . $this->clientversion . ' (www.picqer.com)');
+        curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent . ' ' . $this->clientversion);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
 
         if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE')

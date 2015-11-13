@@ -1,23 +1,28 @@
 {
-	"name": "picqer/api-client",
-	"type": "library",
-	"description": "A PHP Client for the Picqer API",
-	"keywords": ["picqer", "api", "php", "wms"],
-	"homepage": "http://github.com/picqer/picqer-php",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Casper Bakker",
-			"email": "support@picqer.com"
-		}
-	],
-	"require": {
-		"php": ">=5.3.0",
-		"ext-curl": "*"
-	},
-	"autoload": {
-		"psr-0": {
-			"Picqer": "src"
-		}
-	}
+    "name": "picqer/api-client",
+    "type": "library",
+    "description": "A PHP Client for the Picqer API",
+    "keywords": [
+        "picqer",
+        "api",
+        "php",
+        "wms"
+    ],
+    "homepage": "http://github.com/picqer/picqer-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Casper Bakker",
+            "email": "info@picqer.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Picqer": "src"
+        }
+    }
 }
