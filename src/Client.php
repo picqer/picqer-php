@@ -5,7 +5,7 @@ namespace Picqer\Api;
 /**
  * Picqer PHP API Client
  *
- * @author Casper Bakker <support@picqer.com>
+ * @author Casper Bakker <info@picqer.com>
  * @license http://creativecommons.org/licenses/MIT/ MIT
  */
 

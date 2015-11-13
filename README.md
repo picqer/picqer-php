@@ -12,7 +12,22 @@ This project can easily be installed through Composer.
 composer require picqer/api-client
 ```
 
-## Examples
+## Example: Get orders
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+$subdomain = 'jansens-webwinkels';
+$apikey = '1023ihs0edfh';
+
+$apiclient = new Picqer\Api\Client($subdomain, $apikey);
+
+$orders = $apiclient->getOrders();
+var_dump($orders);
+```
+
+## More examples
 Review the examples in the examples/ folder.
 
 ## Support

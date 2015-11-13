@@ -1,6 +1,6 @@
 <?php
 
-require('../src/Picqer/Api/Client.php');
+require('../src/Client.php');
 
 // Start 
 $apiclient = new Picqer\Api\Client('--clientsubdomain--', '--apikey--');
