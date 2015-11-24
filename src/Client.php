@@ -249,6 +249,12 @@ class Client {
         return $result;
     }
 
+    public function getShipments($idpicklist)
+    {
+        $result = $this->sendRequest('/picklists/' . $idpicklist . '/shipments');
+        return $result;
+    }
+
     /*
      * Suppliers
      */
