@@ -351,6 +351,18 @@ class Client {
     /*
      * Backorders
      */
+    public function getBackorders($filters = array())
+    {
+        $result = $this->sendRequest('/backorders', null, null, $filters);
+        return $result;
+    }
+
+    public function getBackorder($idbackorder)
+    {
+        $result = $this->sendRequest('/backorders/' . $idbackorder);
+        return $result;
+    }
+
     public function processBackorders()
     {
         $result = $this->sendRequest('/backorders/process', null, 'POST');
