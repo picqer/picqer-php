@@ -546,7 +546,22 @@ class Client {
 
         curl_close($ch);
 
-        if ( ! in_array($headerinfo['http_code'], array('200', '201', '204'))) // API returns error
+        $error = false;
+        if ($method == 'DELETE')   
+        {
+            if ($headerinfo['http_code'] != '204')     // API returns 'No Content' when item is deleted
+            {
+                $error = true;
+            }
+
+        } else {
+            if (in_array($headerinfo['http_code'], array('200', '201', '204'))) // API returns error
+            {
+                $error = true;
+            }
+        }
+
+        if($error)  
         {
             $result['error'] = true;
             $result['errorcode'] = $headerinfo['http_code'];
@@ -554,7 +569,8 @@ class Client {
             {
                 $result['errormessage'] = $apiresult;
             }
-        } else // API returns success
+
+        } else 
         {
             $result['success'] = true;
             $result['data'] = (($apiresult_json === null) ? $apiresult : $apiresult_json);
