@@ -137,6 +137,11 @@ class Client {
         return $result;
     }
 
+    public function updateProduct($idproduct, $data)    {
+        $result = $this->sendRequest('/products/' . $idproduct, $data, 'PUT');
+        return $result;
+    }
+
     /*
      * Orders
      */
