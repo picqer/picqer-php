@@ -491,6 +491,21 @@ class Client {
     }
 
     /*
+     * Pricelists
+     */
+    public function getPricelists()
+    {
+        $result = $this->sendRequest('/pricelists');
+        return $result;
+    }
+
+    public function getPricelist($idpricelist)
+    {
+        $result = $this->sendRequest('/pricelists/' . $idpricelist);
+        return $result;
+    }
+
+    /*
      * Shipping providers
      */
     public function getShippingProividers()
