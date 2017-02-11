@@ -413,6 +413,21 @@ class Client {
     }
 
     /*
+     * Stock history
+     */
+    public function getStockHistory()
+    {
+        $result = $this->sendRequest('/stockhistory');
+        return $result;
+    }
+
+    public function getStockHistoryOfProduct($idproduct)
+    {
+        $result = $this->sendRequest('/stockhistory/' . $idproduct);
+        return $result;
+    }
+
+    /*
      * Hooks
      */
     public function addHook($params)
