@@ -86,6 +86,16 @@ class Client {
         return $result;
     }
 
+    public function editCustomerAddress($idcustomer, $idaddress, $params)   {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
+        return $result;
+    }
+
+    public function removeCustomerAddress($idcustomer, $idaddress)  {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
+        return $result;
+    }
+
     /*
      * Products
      */
