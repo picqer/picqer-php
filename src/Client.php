@@ -154,8 +154,18 @@ class Client {
         return $result;
     }
 
-    public function editProduct($idproduct, $data)    {
-        $result = $this->sendRequest('/products/' . $idproduct, $data, 'PUT');
+    public function getProductWarehouseSettings($idproduct)    {
+        $result = $this->sendRequest('/products/' . $idproduct . 'warehouses');
+        return $result;
+    }
+
+    public function editProductWarehouseSetting($idproduct, $idwarehouse, $params) {
+        $result = $this->sendRequest('/products/' . $idproduct . 'warehouses/' . $idwarehouse, $params, 'PUT');
+        return $result;
+    }
+
+    public function editProduct($idproduct, $params)    {
+        $result = $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
         return $result;
     }
 
