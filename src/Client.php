@@ -266,6 +266,11 @@ class Client {
         return $result;
     }
 
+    public function editOrder($idorder, $params)    {
+        $result = $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
+        return $result;
+    }
+
     /*
      * Orders
      */
