@@ -78,7 +78,12 @@ class Client {
     }
 
     public function getCustomerAddress($idcustomer) {
-        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses', 'GET')
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses')
+    }
+
+    public function addCustomerAddress($idcustomer, $params)    {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, 'POST');
+        return $result;
     }
 
     /*
