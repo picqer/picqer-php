@@ -238,9 +238,30 @@ class Client {
         return $result;
     }
 
+    public function deleteOrder($idorder) {
+        $result = $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
+        return $result;
+    }
+
+    public function getProductStatus($idorder)  {
+        $result = $this->sendRequest('/orders/' . $idorder . '/productstatus');
+        return $result;
+    }
+
     public function closeOrder($idorder)
     {
         $result = $this->sendRequest('/orders/' . $idorder . '/close', null, 'POST');
+        return $result;
+    }
+
+    public function processOrder($idorder)
+    {
+        $result = $this->sendRequest('/orders/' . $idorder . '/process', null, 'POST');
+        return $result;
+    }
+
+    public function addOrderNote($idorder, $note)   {
+        $result = $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), 'POST');
         return $result;
     }
 
