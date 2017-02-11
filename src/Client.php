@@ -476,6 +476,15 @@ class Client {
     }
 
     /*
+     * Shipping providers
+     */
+    public function getShippingProividers()
+    {
+        $result = $this->sendRequest('/shippingproviders');
+        return $result;
+    }
+
+    /*
      * General
      */
     public function getAllResults($entity, $filters = array())
