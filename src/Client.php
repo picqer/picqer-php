@@ -155,17 +155,50 @@ class Client {
     }
 
     public function getProductWarehouseSettings($idproduct)    {
-        $result = $this->sendRequest('/products/' . $idproduct . 'warehouses');
+        $result = $this->sendRequest('/products/' . $idproduct . '/warehouses');
         return $result;
     }
 
     public function editProductWarehouseSetting($idproduct, $idwarehouse, $params) {
-        $result = $this->sendRequest('/products/' . $idproduct . 'warehouses/' . $idwarehouse, $params, 'PUT');
+        $result = $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
+        return $result;
+    }
+
+    public function getProductImages($idproduct)    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/images'));
+        return $result;
+    }
+
+    public function addImageToProduct($idproduct, $base64Image) {
+        $result = $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), 'POST');
+        return $result;
+    }
+
+    public function removeImageFromProduct($idproduct, $idproduct_image)    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
         return $result;
     }
 
     public function editProduct($idproduct, $params)    {
         $result = $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
+        return $result;
+    }
+
+    public function getProductTags($idproduct)
+    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/tags');
+        return $result;
+    }
+
+    public function addProductTag($idproduct, $idtag)
+    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), 'POST');
+        return $result;
+    }
+
+    public function removeProductTag($idproduct, $idtag)
+    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), 'DELETE');
         return $result;
     }
 
