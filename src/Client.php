@@ -1,5 +1,4 @@
 <?php
-
 namespace Picqer\Api;
 
 /**
@@ -8,7 +7,6 @@ namespace Picqer\Api;
  * @author Casper Bakker <info@picqer.com>
  * @license http://creativecommons.org/licenses/MIT/ MIT
  */
-
 class Client {
     protected $company;
     protected $username;
@@ -77,6 +75,10 @@ class Client {
     {
         $result = $this->sendRequest('/customers/' . $idcustomer, $params, 'PUT');
         return $result;
+    }
+
+    public function getCustomerAddress($idcustomer) {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses', 'GET')
     }
 
     /*
