@@ -1,4 +1,5 @@
 <?php
+
 namespace Picqer\Api;
 
 /**
@@ -71,7 +72,13 @@ class Client {
         return $result;
     }
 
+    /** @deprecated Use the `update`, stays here for backwards compatibility */
     public function editCustomer($idcustomer, $params)
+    {
+        $this->updateCustomer($idcustomer, $params);
+    }
+
+    public function updateCustomer($idcustomer, $params)
     {
         $result = $this->sendRequest('/customers/' . $idcustomer, $params, 'PUT');
         return $result;
@@ -86,12 +93,12 @@ class Client {
         return $result;
     }
 
-    public function editCustomerAddress($idcustomer, $idaddress, $params)   {
+    public function updateCustomerAddress($idcustomer, $idaddress, $params)   {
         $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
         return $result;
     }
 
-    public function removeCustomerAddress($idcustomer, $idaddress)  {
+    public function deleteCustomerAddress($idcustomer, $idaddress)  {
         $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
         return $result;
     }
@@ -159,7 +166,7 @@ class Client {
         return $result;
     }
 
-    public function editProductWarehouseSetting($idproduct, $idwarehouse, $params) {
+    public function updateProductWarehouseSetting($idproduct, $idwarehouse, $params) {
         $result = $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
         return $result;
     }
@@ -174,12 +181,12 @@ class Client {
         return $result;
     }
 
-    public function removeImageFromProduct($idproduct, $idproduct_image)    {
+    public function deleteImageFromProduct($idproduct, $idproduct_image)    {
         $result = $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
         return $result;
     }
 
-    public function editProduct($idproduct, $params)    {
+    public function updateProduct($idproduct, $params)    {
         $result = $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
         return $result;
     }
@@ -196,7 +203,7 @@ class Client {
         return $result;
     }
 
-    public function removeProductTag($idproduct, $idtag)
+    public function deleteProductTag($idproduct, $idtag)
     {
         $result = $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), 'DELETE');
         return $result;
@@ -238,12 +245,12 @@ class Client {
         return $result;
     }
 
-    public function deleteOrder($idorder) {
+    public function cancelOrder($idorder) {
         $result = $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
         return $result;
     }
 
-    public function getProductStatus($idorder)  {
+    public function getOrderProductStatus($idorder)  {
         $result = $this->sendRequest('/orders/' . $idorder . '/productstatus');
         return $result;
     }
@@ -281,13 +288,19 @@ class Client {
         return $result;
     }
 
+    /** @deprecated Use the `delete`, stays here for backwards compatibility */
     public function removeOrderTag($idorder, $idtag)
+    {
+        $this->deleteOrderTag($idorder, $idtag);
+    }
+
+    public function deleteOrderTag($idorder, $idtag)
     {
         $result = $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), 'DELETE');
         return $result;
     }
 
-    public function editOrder($idorder, $params)    {
+    public function updateOrder($idorder, $params)    {
         $result = $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
         return $result;
     }
