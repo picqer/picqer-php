@@ -16,4 +16,4 @@ $data = array(
 	'name' 			=>	'Apple iPod Shuffle Green')
 );
 
-var_dump($apiclient->updateProduct($product['data']['idproduct'], $data));
+var_dump($apiclient->editProduct($product['data']['idproduct'], $data));

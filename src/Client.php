@@ -1,5 +1,4 @@
 <?php
-
 namespace Picqer\Api;
 
 /**
@@ -8,7 +7,6 @@ namespace Picqer\Api;
  * @author Casper Bakker <info@picqer.com>
  * @license http://creativecommons.org/licenses/MIT/ MIT
  */
-
 class Client {
     protected $company;
     protected $username;
@@ -79,6 +77,25 @@ class Client {
         return $result;
     }
 
+    public function getCustomerAddress($idcustomer) {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses')
+    }
+
+    public function addCustomerAddress($idcustomer, $params)    {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, 'POST');
+        return $result;
+    }
+
+    public function editCustomerAddress($idcustomer, $idaddress, $params)   {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
+        return $result;
+    }
+
+    public function removeCustomerAddress($idcustomer, $idaddress)  {
+        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
+        return $result;
+    }
+
     /*
      * Products
      */
@@ -137,8 +154,51 @@ class Client {
         return $result;
     }
 
-    public function updateProduct($idproduct, $data)    {
-        $result = $this->sendRequest('/products/' . $idproduct, $data, 'PUT');
+    public function getProductWarehouseSettings($idproduct)    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/warehouses');
+        return $result;
+    }
+
+    public function editProductWarehouseSetting($idproduct, $idwarehouse, $params) {
+        $result = $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
+        return $result;
+    }
+
+    public function getProductImages($idproduct)    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/images'));
+        return $result;
+    }
+
+    public function addImageToProduct($idproduct, $base64Image) {
+        $result = $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), 'POST');
+        return $result;
+    }
+
+    public function removeImageFromProduct($idproduct, $idproduct_image)    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
+        return $result;
+    }
+
+    public function editProduct($idproduct, $params)    {
+        $result = $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
+        return $result;
+    }
+
+    public function getProductTags($idproduct)
+    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/tags');
+        return $result;
+    }
+
+    public function addProductTag($idproduct, $idtag)
+    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), 'POST');
+        return $result;
+    }
+
+    public function removeProductTag($idproduct, $idtag)
+    {
+        $result = $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), 'DELETE');
         return $result;
     }
 
@@ -178,9 +238,30 @@ class Client {
         return $result;
     }
 
+    public function deleteOrder($idorder) {
+        $result = $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
+        return $result;
+    }
+
+    public function getProductStatus($idorder)  {
+        $result = $this->sendRequest('/orders/' . $idorder . '/productstatus');
+        return $result;
+    }
+
     public function closeOrder($idorder)
     {
         $result = $this->sendRequest('/orders/' . $idorder . '/close', null, 'POST');
+        return $result;
+    }
+
+    public function processOrder($idorder)
+    {
+        $result = $this->sendRequest('/orders/' . $idorder . '/process', null, 'POST');
+        return $result;
+    }
+
+    public function addOrderNote($idorder, $note)   {
+        $result = $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), 'POST');
         return $result;
     }
 
@@ -203,6 +284,11 @@ class Client {
     public function removeOrderTag($idorder, $idtag)
     {
         $result = $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), 'DELETE');
+        return $result;
+    }
+
+    public function editOrder($idorder, $params)    {
+        $result = $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
         return $result;
     }
 
@@ -327,6 +413,21 @@ class Client {
     }
 
     /*
+     * Stock history
+     */
+    public function getStockHistory()
+    {
+        $result = $this->sendRequest('/stockhistory');
+        return $result;
+    }
+
+    public function getStockHistoryOfProduct($idproduct)
+    {
+        $result = $this->sendRequest('/stockhistory/' . $idproduct);
+        return $result;
+    }
+
+    /*
      * Hooks
      */
     public function addHook($params)
@@ -386,6 +487,30 @@ class Client {
     public function getWarehouse($idwarehouse)
     {
         $result = $this->sendRequest('/warehouses/' . $idwarehouse);
+        return $result;
+    }
+
+    /*
+     * Pricelists
+     */
+    public function getPricelists()
+    {
+        $result = $this->sendRequest('/pricelists');
+        return $result;
+    }
+
+    public function getPricelist($idpricelist)
+    {
+        $result = $this->sendRequest('/pricelists/' . $idpricelist);
+        return $result;
+    }
+
+    /*
+     * Shipping providers
+     */
+    public function getShippingProividers()
+    {
+        $result = $this->sendRequest('/shippingproviders');
         return $result;
     }
 
