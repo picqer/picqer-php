@@ -20,7 +20,7 @@ class Client
     protected $apiversion = 'v1';
     protected $useragent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientversion = '0.10.0';
+    protected $clientversion = '0.13.0';
 
     protected $debug = false;
     protected $skipverification = false;
@@ -204,6 +204,29 @@ class Client
     }
 
     /*
+     * Stock history
+     */
+    public function getStockHistories($filters = array())
+    {
+        return $this->sendRequest('/stockhistory', $filters);
+    }
+
+    public function getStockHistory($idproduct_stock_history)
+    {
+        return $this->sendRequest('/stockhistory/' . $idproduct_stock_history);
+    }
+
+    public function getStockHistoryForProduct($idproduct)
+    {
+        return $this->getStockHistories(array('idproduct', $idproduct));
+    }
+
+    public function getStockHistoryForWarehouse($idwarehouse)
+    {
+        return $this->getStockHistories(array('idwarehouse', $idwarehouse));
+    }
+
+    /*
      * Orders
      */
     public function getOrders($filters = array())
@@ -247,9 +270,10 @@ class Client
         return $this->sendRequest('/orders/' . $idorder . '/productstatus');
     }
 
+    /** @deprecated Use `processOrder`, still here for backwards compatibility */
     public function closeOrder($idorder)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/close', null, self::METHOD_POST);
+        return $this->processOrder($idorder);
     }
 
     public function processOrder($idorder)
@@ -331,6 +355,23 @@ class Client
         return $this->sendRequest('/picklists/' . $idpicklist . '/pickall', null, self::METHOD_POST);
     }
 
+    public function assignPicklistToUser($idpicklist, $iduser)
+    {
+        $params = array('iduser' => $iduser);
+        return $this->sendRequest('/picklists/' . $idpicklist . '/assign', $params, self::METHOD_POST);
+    }
+
+    public function unassignPicklist($idpicklist)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist . '/unassign', null, self::METHOD_POST);
+    }
+
+    public function snoozePicklist($idpicklist, $snooze_until = null)
+    {
+        $params = array('snooze_until' => $snooze_until);
+        return $this->sendRequest('/picklists/' . $idpicklist . '/snooze', $params, self::METHOD_POST);
+    }
+
     public function createShipment($idpicklist, $params)
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/shipments', $params, self::METHOD_POST);
@@ -339,6 +380,16 @@ class Client
     public function getShipments($idpicklist)
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/shipments');
+    }
+
+    public function getPicklistPdf($idpicklist)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist . '/picklistpdf');
+    }
+
+    public function getPackinglistPdf($idpicklist)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist . '/packinglistpdf');
     }
 
     /*
@@ -367,9 +418,29 @@ class Client
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder);
     }
 
-    public function receivePurchaseorderProduct($idpurchaseorder, $params)
+    public function markPurchaseorderAsPurchased($idpurchaseorder)
     {
-        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receive', $params, self::METHOD_POST);
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/mark-as-purchased', null, self::METHOD_POST);
+    }
+
+    public function cancelPurchaseorder($idpurchaseorder)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/cancel', null, self::METHOD_POST);
+    }
+
+    public function getReceiptsFromPurchaseorder($idpurchaseorder)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts');
+    }
+
+    public function getReceiptFromPurchaseorder($idpurchaseorder, $idreceipt)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts/' . $idreceipt);
+    }
+
+    public function addReceiptToPurchaseorder($idpurchaseorder, $params)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts', $params, self::METHOD_POST);
     }
 
     /*
@@ -399,26 +470,8 @@ class Client
     }
 
     /*
-     * Stock history
-     */
-    public function getStockHistory()
-    {
-        return $this->sendRequest('/stockhistory');
-    }
-
-    public function getStockHistoryOfProduct($idproduct)
-    {
-        return $this->sendRequest('/stockhistory/' . $idproduct);
-    }
-
-    /*
      * Hooks
      */
-    public function addHook($params)
-    {
-        return $this->sendRequest('/hooks', $params, self::METHOD_POST);
-    }
-
     public function getHooks()
     {
         return $this->sendRequest('/hooks');
@@ -427,6 +480,11 @@ class Client
     public function getHook($id)
     {
         return $this->sendRequest('/hooks/' . $id);
+    }
+
+    public function addHook($params)
+    {
+        return $this->sendRequest('/hooks', $params, self::METHOD_POST);
     }
 
     public function deleteHook($id)
@@ -450,6 +508,11 @@ class Client
     public function processBackorders()
     {
         return $this->sendRequest('/backorders/process', null, self::METHOD_POST);
+    }
+    
+    public function deleteBackorder($idbackorder)
+    {
+        return $this->sendRequest('/backorders/' . $idbackorder, null, self::METHOD_DELETE);
     }
 
     /*
@@ -481,10 +544,76 @@ class Client
     /*
      * Shipping providers
      */
-    public function getShippingProividers()
+    public function getShippingProviders()
     {
         return $this->sendRequest('/shippingproviders');
     }
+    
+    /*
+     * Product fields
+     */
+    public function getProductFields()
+    {
+        return $this->sendRequest('/productfields');
+    }
+
+    public function getProductField($idproductfield)
+    {
+        return $this->sendRequest('/productfields/' . $idproductfield);
+    }
+    
+    /*
+     * Order fields
+     */
+    public function getOrderFields()
+    {
+        return $this->sendRequest('/orderfields');
+    }
+
+    public function getOrderField($idorderfield)
+    {
+        return $this->sendRequest('/orderfields/' . $idorderfield);
+    }
+    
+    /*
+     * Customer fields
+     */
+    public function getCustomerFields()
+    {
+        return $this->sendRequest('/customerfields');
+    }
+
+    public function getCustomerField($idcustomerfield)
+    {
+        return $this->sendRequest('/customerfields/' . $idcustomerfield);
+    }
+
+    /*
+     * Users
+     */
+    public function getUsers()
+    {
+        return $this->sendRequest('/users');
+    }
+
+    public function getUser($iduser)
+    {
+        return $this->sendRequest('/users/' . $iduser);
+    }
+
+    public function getCurrentUser()
+    {
+        return $this->getUser('me');
+    }
+
+    /*
+     * Templates
+     */
+    public function getTemplates()
+    {
+        return $this->sendRequest('/templates');
+    }
+
 
     /*
      * General
