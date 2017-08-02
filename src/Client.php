@@ -8,7 +8,8 @@ namespace Picqer\Api;
  * @author Casper Bakker <info@picqer.com>
  * @license http://creativecommons.org/licenses/MIT/ MIT
  */
-class Client {
+class Client
+{
     protected $company;
     protected $username;
     protected $password;
@@ -56,11 +57,9 @@ class Client {
     public function getCustomerByCustomerid($customerid)
     {
         $result = $this->sendRequest('/customers?customerid=' . urlencode($customerid));
-        if (is_array($result['data']) && count($result['data']) == 1)
-        {
+        if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
-        } else
-        {
+        } else {
             $result = null;
         }
         return $result;
@@ -84,21 +83,25 @@ class Client {
         return $result;
     }
 
-    public function getCustomerAddress($idcustomer) {
+    public function getCustomerAddress($idcustomer)
+    {
         $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses')
     }
 
-    public function addCustomerAddress($idcustomer, $params)    {
+    public function addCustomerAddress($idcustomer, $params)
+    {
         $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, 'POST');
         return $result;
     }
 
-    public function updateCustomerAddress($idcustomer, $idaddress, $params)   {
+    public function updateCustomerAddress($idcustomer, $idaddress, $params)
+    {
         $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
         return $result;
     }
 
-    public function deleteCustomerAddress($idcustomer, $idaddress)  {
+    public function deleteCustomerAddress($idcustomer, $idaddress)
+    {
         $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
         return $result;
     }
@@ -127,11 +130,9 @@ class Client {
     public function getProductByProductcode($productcode)
     {
         $result = $this->sendRequest('/products?productcode=' . urlencode($productcode));
-        if (is_array($result['data']) && count($result['data']) == 1)
-        {
+        if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
-        } else
-        {
+        } else {
             $result = null;
         }
         return $result;
@@ -161,32 +162,38 @@ class Client {
         return $result;
     }
 
-    public function getProductWarehouseSettings($idproduct)    {
+    public function getProductWarehouseSettings($idproduct)
+    {
         $result = $this->sendRequest('/products/' . $idproduct . '/warehouses');
         return $result;
     }
 
-    public function updateProductWarehouseSetting($idproduct, $idwarehouse, $params) {
+    public function updateProductWarehouseSetting($idproduct, $idwarehouse, $params)
+    {
         $result = $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
         return $result;
     }
 
-    public function getProductImages($idproduct)    {
+    public function getProductImages($idproduct)
+    {
         $result = $this->sendRequest('/products/' . $idproduct . '/images'));
         return $result;
     }
 
-    public function addImageToProduct($idproduct, $base64Image) {
+    public function addImageToProduct($idproduct, $base64Image)
+    {
         $result = $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), 'POST');
         return $result;
     }
 
-    public function deleteImageFromProduct($idproduct, $idproduct_image)    {
+    public function deleteImageFromProduct($idproduct, $idproduct_image)
+    {
         $result = $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
         return $result;
     }
 
-    public function updateProduct($idproduct, $params)    {
+    public function updateProduct($idproduct, $params)
+    {
         $result = $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
         return $result;
     }
@@ -232,8 +239,7 @@ class Client {
     public function getOrderByOrderid($orderid)
     {
         $result = $this->sendRequest('/orders?orderid=' . urlencode($orderid));
-        if (count($result['data']) == 1)
-        {
+        if (count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         }
         return $result;
@@ -245,12 +251,14 @@ class Client {
         return $result;
     }
 
-    public function cancelOrder($idorder) {
+    public function cancelOrder($idorder)
+    {
         $result = $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
         return $result;
     }
 
-    public function getOrderProductStatus($idorder)  {
+    public function getOrderProductStatus($idorder)
+    {
         $result = $this->sendRequest('/orders/' . $idorder . '/productstatus');
         return $result;
     }
@@ -267,7 +275,8 @@ class Client {
         return $result;
     }
 
-    public function addOrderNote($idorder, $note)   {
+    public function addOrderNote($idorder, $note)
+    {
         $result = $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), 'POST');
         return $result;
     }
@@ -300,7 +309,8 @@ class Client {
         return $result;
     }
 
-    public function updateOrder($idorder, $params)    {
+    public function updateOrder($idorder, $params)
+    {
         $result = $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
         return $result;
     }
@@ -328,8 +338,7 @@ class Client {
     public function getPicklistByPicklistid($picklistid)
     {
         $result = $this->sendRequest('/picklists?picklistid=' . urlencode($picklistid));
-        if (count($result['data']) == 1)
-        {
+        if (count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         }
         return $result;
@@ -538,23 +547,18 @@ class Client {
         $functionname = 'get' . ucfirst($entity) . 's';
 
         $i = 0;
-        while ($gotAll == false)
-        {
+        while ($gotAll == false) {
             $filters['offset'] = ($i * 100);
             $result = $this->$functionname($filters);
-            if (isset($result['success']) && $result['success'] && isset($result['data']))
-            {
-                if (count($result['data']) < 100)
-                {
+            if (isset($result['success']) && $result['success'] && isset($result['data'])) {
+                if (count($result['data']) < 100) {
                     $gotAll = true;
                 }
-                foreach ($result['data'] as $item)
-                {
+                foreach ($result['data'] as $item) {
                     $collection[] = $item;
                 }
                 $i++;
-            } else
-            {
+            } else {
                 return $result;
             }
         }
@@ -628,8 +632,7 @@ class Client {
 
         $endpoint = $this->getEndpoint($endpoint, $filters);
 
-        if ($this->debug)
-        {
+        if ($this->debug) {
             echo 'URL: ' . $this->getUrl($endpoint) . PHP_EOL;
         }
 
@@ -642,28 +645,23 @@ class Client {
         curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent . ' ' . $this->clientversion);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
 
-        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE')
-        {
+        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
             $data = $this->prepareData($params);
 
             if ($this->debug)
                 echo 'Data: ' . $data . PHP_EOL;
 
-            if ($method == 'POST')
-            {
+            if ($method == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, true);
-            } elseif ($method == 'PUT')
-            {
+            } elseif ($method == 'PUT') {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-            } elseif ($method == 'DELETE')
-            {
+            } elseif ($method == 'DELETE') {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
             }
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
 
-        if ($this->skipverification)
-        {
+        if ($this->skipverification) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
@@ -689,12 +687,11 @@ class Client {
 
         curl_close($ch);
 
-        if ( ! in_array($headerinfo['http_code'], array('200', '201', '204'))) // API returns error
+        if (! in_array($headerinfo['http_code'], array('200', '201', '204'))) // API returns error
         {
             $result['error'] = true;
             $result['errorcode'] = $headerinfo['http_code'];
-            if (isset($apiresult))
-            {
+            if (isset($apiresult)) {
                 $result['errormessage'] = $apiresult;
             }
         } else // API returns success
@@ -719,16 +716,12 @@ class Client {
 
     protected function getEndpoint($endpoint, $filters)
     {
-        if ( ! empty($filters))
-        {
+        if (! empty($filters)) {
             $i = 0;
-            foreach ($filters as $key => $value)
-            {
-                if ($i == 0)
-                {
+            foreach ($filters as $key => $value) {
+                if ($i == 0) {
                     $endpoint .= '?';
-                } else
-                {
+                } else {
                     $endpoint .= '&';
                 }
                 $endpoint .= $key . '=' . urlencode($value);
