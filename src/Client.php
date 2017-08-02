@@ -27,6 +27,13 @@ class Client
 
     protected $timeoutInSeconds = 60;
 
+    const METHOD_GET = 'GET';
+    const METHOD_POST = 'POST';
+    const METHOD_PUT = 'PUT';
+    const METHOD_DELETE = 'DELETE';
+
+    protected $rawResponseHeaders;
+
     public function __construct($company, $apikey = '', $password = 'X')
     {
         $this->company = $company;
@@ -65,7 +72,7 @@ class Client
 
     public function addCustomer($params)
     {
-        return $this->sendRequest('/customers', $params, 'POST');
+        return $this->sendRequest('/customers', $params, self::METHOD_POST);
     }
 
     /** @deprecated Use the `update`, stays here for backwards compatibility */
@@ -76,7 +83,7 @@ class Client
 
     public function updateCustomer($idcustomer, $params)
     {
-        return $this->sendRequest('/customers/' . $idcustomer, $params, 'PUT');
+        return $this->sendRequest('/customers/' . $idcustomer, $params, self::METHOD_PUT);
     }
 
     public function getCustomerAddress($idcustomer)
@@ -86,17 +93,17 @@ class Client
 
     public function addCustomerAddress($idcustomer, $params)
     {
-        return $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, 'POST');
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, self::METHOD_POST);
     }
 
     public function updateCustomerAddress($idcustomer, $idaddress, $params)
     {
-        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, self::METHOD_POST);
     }
 
     public function deleteCustomerAddress($idcustomer, $idaddress)
     {
-        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), self::METHOD_DELETE);
     }
 
     /*
@@ -133,7 +140,7 @@ class Client
 
     public function addProduct($params)
     {
-        return $this->sendRequest('/products', $params, 'POST');
+        return $this->sendRequest('/products', $params, self::METHOD_POST);
     }
 
     public function getProductStock($idproduct)
@@ -148,7 +155,7 @@ class Client
 
     public function updateProductStockForWarehouse($idproduct, $idwarehouse, $params)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse, $params, 'POST');
+        return $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse, $params, self::METHOD_POST);
     }
 
     public function getProductWarehouseSettings($idproduct)
@@ -158,7 +165,7 @@ class Client
 
     public function updateProductWarehouseSetting($idproduct, $idwarehouse, $params)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
+        return $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, self::METHOD_PUT);
     }
 
     public function getProductImages($idproduct)
@@ -168,17 +175,17 @@ class Client
 
     public function addImageToProduct($idproduct, $base64Image)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), 'POST');
+        return $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), self::METHOD_POST);
     }
 
     public function deleteImageFromProduct($idproduct, $idproduct_image)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
+        return $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), self::METHOD_DELETE);
     }
 
     public function updateProduct($idproduct, $params)
     {
-        return $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
+        return $this->sendRequest('/products/' . $idproduct, $params, self::METHOD_PUT);
     }
 
     public function getProductTags($idproduct)
@@ -188,12 +195,12 @@ class Client
 
     public function addProductTag($idproduct, $idtag)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), 'POST');
+        return $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), self::METHOD_POST);
     }
 
     public function deleteProductTag($idproduct, $idtag)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), 'DELETE');
+        return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), self::METHOD_DELETE);
     }
 
     /*
@@ -227,12 +234,12 @@ class Client
 
     public function addOrder($params)
     {
-        return $this->sendRequest('/orders', $params, 'POST');
+        return $this->sendRequest('/orders', $params, self::METHOD_POST);
     }
 
     public function cancelOrder($idorder)
     {
-        return $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
+        return $this->sendRequest('/orders/' . $idorder, array(), self::METHOD_DELETE);
     }
 
     public function getOrderProductStatus($idorder)
@@ -242,17 +249,17 @@ class Client
 
     public function closeOrder($idorder)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/close', null, 'POST');
+        return $this->sendRequest('/orders/' . $idorder . '/close', null, self::METHOD_POST);
     }
 
     public function processOrder($idorder)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/process', null, 'POST');
+        return $this->sendRequest('/orders/' . $idorder . '/process', null, self::METHOD_POST);
     }
 
     public function addOrderNote($idorder, $note)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), 'POST');
+        return $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), self::METHOD_POST);
     }
 
     public function getOrderTags($idorder)
@@ -266,7 +273,7 @@ class Client
             'idtag' => $idtag
         );
 
-        return $this->sendRequest('/orders/' . $idorder . '/tags', $params, 'POST');
+        return $this->sendRequest('/orders/' . $idorder . '/tags', $params, self::METHOD_POST);
     }
 
     /** @deprecated Use the `delete`, stays here for backwards compatibility */
@@ -277,12 +284,12 @@ class Client
 
     public function deleteOrderTag($idorder, $idtag)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), 'DELETE');
+        return $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), self::METHOD_DELETE);
     }
 
     public function updateOrder($idorder, $params)
     {
-        return $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
+        return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_PUT);
     }
 
     /*
@@ -316,17 +323,17 @@ class Client
 
     public function closePicklist($idpicklist)
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/close', null, 'POST');
+        return $this->sendRequest('/picklists/' . $idpicklist . '/close', null, self::METHOD_POST);
     }
 
     public function pickallPicklist($idpicklist)
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/pickall', null, 'POST');
+        return $this->sendRequest('/picklists/' . $idpicklist . '/pickall', null, self::METHOD_POST);
     }
 
     public function createShipment($idpicklist, $params)
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/shipments', $params, 'POST');
+        return $this->sendRequest('/picklists/' . $idpicklist . '/shipments', $params, self::METHOD_POST);
     }
 
     public function getShipments($idpicklist)
@@ -362,7 +369,7 @@ class Client
 
     public function receivePurchaseorderProduct($idpurchaseorder, $params)
     {
-        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receive', $params, 'POST');
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receive', $params, self::METHOD_POST);
     }
 
     /*
@@ -409,7 +416,7 @@ class Client
      */
     public function addHook($params)
     {
-        return $this->sendRequest('/hooks', $params, 'POST');
+        return $this->sendRequest('/hooks', $params, self::METHOD_POST);
     }
 
     public function getHooks()
@@ -424,7 +431,7 @@ class Client
 
     public function deleteHook($id)
     {
-        return $this->sendRequest('/hooks/' . $id, array(), 'DELETE');
+        return $this->sendRequest('/hooks/' . $id, array(), self::METHOD_DELETE);
     }
 
     /*
@@ -442,7 +449,7 @@ class Client
 
     public function processBackorders()
     {
-        return $this->sendRequest('/backorders/process', null, 'POST');
+        return $this->sendRequest('/backorders/process', null, self::METHOD_POST);
     }
 
     /*
@@ -516,7 +523,7 @@ class Client
      */
     public function addCompany($params)
     {
-        return $this->sendRequest('/companies', $params, 'POST');
+        return $this->sendRequest('/companies', $params, self::METHOD_POST);
     }
 
     /**
@@ -568,64 +575,66 @@ class Client
         $this->timeoutInSeconds = $timeoutInSeconds;
     }
 
-    protected function sendRequest($endpoint, $params = array(), $method = 'GET', $filters = array())
+    protected function sendRequest($endpoint, $params = array(), $method = self::METHOD_GET, $filters = array())
     {
-        $ch = curl_init();
+        $curlSession = curl_init();
 
         $endpoint = $this->getEndpoint($endpoint, $filters);
 
         $this->debug('URL: ' . $this->getUrl($endpoint));
 
-        curl_setopt($ch, CURLOPT_URL, $this->getUrl($endpoint));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->apikey . ':' . $this->password);
-        curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent . ' ' . $this->clientversion);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
+        curl_setopt($curlSession, CURLOPT_URL, $this->getUrl($endpoint));
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlSession, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
+        curl_setopt($curlSession, CURLOPT_HEADER, false);
+        curl_setopt($curlSession, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($curlSession, CURLOPT_USERPWD, $this->apikey . ':' . $this->password);
+        curl_setopt($curlSession, CURLOPT_USERAGENT, $this->useragent . ' ' . $this->clientversion);
+        curl_setopt($curlSession, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
+        curl_setopt($curlSession, CURLOPT_HEADERFUNCTION, function ($curl, $header) {
+            $this->rawResponseHeaders[] = $header;
+            return strlen($header);
+        });
 
-        if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
+        if (in_array($method, array(self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE))) {
             $data = $this->prepareData($params);
-
             $this->debug('Data: ' . $data);
 
-            if ($method == 'POST') {
-                curl_setopt($ch, CURLOPT_POST, true);
-            } elseif ($method == 'PUT') {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-            } elseif ($method == 'DELETE') {
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-            }
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($curlSession, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($curlSession, CURLOPT_POSTFIELDS, $data);
         }
 
         if ($this->skipverification) {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($curlSession, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curlSession, CURLOPT_SSL_VERIFYHOST, false);
         }
 
-        $apiresult = curl_exec($ch);
-        $headerinfo = curl_getinfo($ch);
+        $apiresult = curl_exec($curlSession);
+        $headerinfo = curl_getinfo($curlSession);
 
         $this->debug('Raw result: ' . $apiresult);
 
         $apiresult_json = json_decode($apiresult, true);
+        $apiresult_headers = $this->parseRawHeaders();
 
         $result = array();
         $result['success'] = false;
+        $result['rate-limit-remaining'] = (array_key_exists('X-RateLimit-Remaining', $apiresult_headers)) ? $apiresult_headers['X-RateLimit-Remaining'] : null;
 
         // CURL failed
         if ($apiresult === false) {
             $result['error'] = true;
             $result['errorcode'] = 0;
-            $result['errormessage'] = curl_error($ch);
+            $result['errormessage'] = curl_error($curlSession);
+            curl_close($curlSession);
             return $result;
         }
 
-        curl_close($ch);
+        curl_close($curlSession);
 
-        if (! in_array($headerinfo['http_code'], array('200', '201', '204'))) {
+        if ($headerinfo['http_code'] == '429') {
+            throw new RateLimitException('Rate limit exceeded. Try again later.');
+        } elseif (! in_array($headerinfo['http_code'], array('200', '201', '204'))) {
             // API returns error
             $result['error'] = true;
             $result['errorcode'] = $headerinfo['http_code'];
@@ -674,5 +683,22 @@ class Client
         if ($this->debug) {
             echo 'Debug: ' . $message . PHP_EOL;
         }
+    }
+
+    protected function parseRawHeaders()
+    {
+        $parsedHeaders = array();
+
+        foreach ($this->rawResponseHeaders as $header) {
+            $headerPieces = explode(':', $header, 2);
+
+            if (! isset($headerPieces[0]) || ! isset($headerPieces[1])) {
+                continue;
+            }
+
+            $parsedHeaders[$headerPieces[0]] = trim($headerPieces[1]);
+        }
+
+        return $parsedHeaders;
     }
 }
