@@ -13,7 +13,7 @@ $product = $apiclient->getProductsByProductcode('DKS-092383');
 //      This can be done with the following syntax:
 //      $data = array('productfields' => array(array('idproductfields' => 1, 'value' => 1), array('idproductfields' => 2, 'value' => 2)))
 $data = array(
-    'name' => 'Apple iPod Shuffle Green')
+    'name' => 'Apple iPod Shuffle Green'
 );
 
 var_dump($apiclient->updateProduct($product['data']['idproduct'], $data));

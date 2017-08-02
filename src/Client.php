@@ -11,7 +11,7 @@ namespace Picqer\Api;
 class Client
 {
     protected $company;
-    protected $username;
+    protected $apikey;
     protected $password;
 
     protected $apihost = 'picqer.com';
@@ -27,11 +27,11 @@ class Client
 
     protected $timeoutInSeconds = 60;
 
-    public function __construct($company, $username = '', $password = 'X')
+    public function __construct($company, $apikey = '', $password = 'X')
     {
         $this->company = $company;
-        $this->username = $username;
-        $this->password = $password;
+        $this->apikey = $apikey;
+        $this->password = $password; // Only needed with legacy integrations
     }
 
     /*
@@ -39,8 +39,7 @@ class Client
      */
     public function getCustomers($filters = array())
     {
-        $result = $this->sendRequest('/customers', null, null, $filters);
-        return $result;
+        return $this->sendRequest('/customers', null, null, $filters);
     }
 
     public function getAllCustomers($filters = array())
@@ -50,8 +49,7 @@ class Client
 
     public function getCustomer($idcustomer)
     {
-        $result = $this->sendRequest('/customers/' . $idcustomer);
-        return $result;
+        return $this->sendRequest('/customers/' . $idcustomer);
     }
 
     public function getCustomerByCustomerid($customerid)
@@ -67,8 +65,7 @@ class Client
 
     public function addCustomer($params)
     {
-        $result = $this->sendRequest('/customers', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/customers', $params, 'POST');
     }
 
     /** @deprecated Use the `update`, stays here for backwards compatibility */
@@ -79,31 +76,27 @@ class Client
 
     public function updateCustomer($idcustomer, $params)
     {
-        $result = $this->sendRequest('/customers/' . $idcustomer, $params, 'PUT');
-        return $result;
+        return $this->sendRequest('/customers/' . $idcustomer, $params, 'PUT');
     }
 
     public function getCustomerAddress($idcustomer)
     {
-        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses')
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses');
     }
 
     public function addCustomerAddress($idcustomer, $params)
     {
-        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, 'POST');
     }
 
     public function updateCustomerAddress($idcustomer, $idaddress, $params)
     {
-        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
-        return $result;
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, 'POST');
     }
 
     public function deleteCustomerAddress($idcustomer, $idaddress)
     {
-        $result = $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
-        return $result;
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), 'DELETE');
     }
 
     /*
@@ -112,8 +105,7 @@ class Client
     public function getProducts($filters = array())
     {
         $endpoint = '/products';
-        $result = $this->sendRequest($endpoint, null, null, $filters);
-        return $result;
+        return $this->sendRequest($endpoint, null, null, $filters);
     }
 
     public function getAllProducts($filters = array())
@@ -123,97 +115,85 @@ class Client
 
     public function getProduct($idproduct)
     {
-        $result = $this->sendRequest('/products/' . $idproduct);
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct);
     }
 
     public function getProductByProductcode($productcode)
     {
         $result = $this->sendRequest('/products?productcode=' . urlencode($productcode));
+
         if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         } else {
             $result = null;
         }
+
         return $result;
     }
 
     public function addProduct($params)
     {
-        $result = $this->sendRequest('/products', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/products', $params, 'POST');
     }
 
     public function getProductStock($idproduct)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/stock');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/stock');
     }
 
     public function getProductStockForWarehouse($idproduct, $idwarehouse)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse);
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse);
     }
 
     public function updateProductStockForWarehouse($idproduct, $idwarehouse, $params)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse, $params, 'POST');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse, $params, 'POST');
     }
 
     public function getProductWarehouseSettings($idproduct)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/warehouses');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/warehouses');
     }
 
     public function updateProductWarehouseSetting($idproduct, $idwarehouse, $params)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, 'PUT');
     }
 
     public function getProductImages($idproduct)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/images'));
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/images');
     }
 
     public function addImageToProduct($idproduct, $base64Image)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), 'POST');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), 'POST');
     }
 
     public function deleteImageFromProduct($idproduct, $idproduct_image)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), 'DELETE');
     }
 
     public function updateProduct($idproduct, $params)
     {
-        $result = $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct, $params, 'PUT');
     }
 
     public function getProductTags($idproduct)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/tags');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/tags');
     }
 
     public function addProductTag($idproduct, $idtag)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), 'POST');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), 'POST');
     }
 
     public function deleteProductTag($idproduct, $idtag)
     {
-        $result = $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), 'DELETE');
-        return $result;
+        return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), 'DELETE');
     }
 
     /*
@@ -221,8 +201,7 @@ class Client
      */
     public function getOrders($filters = array())
     {
-        $result = $this->sendRequest('/orders', null, null, $filters);
-        return $result;
+        return $this->sendRequest('/orders', null, null, $filters);
     }
 
     public function getAllOrders($filters = array())
@@ -232,59 +211,53 @@ class Client
 
     public function getOrder($idorder)
     {
-        $result = $this->sendRequest('/orders/' . $idorder);
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder);
     }
 
     public function getOrderByOrderid($orderid)
     {
         $result = $this->sendRequest('/orders?orderid=' . urlencode($orderid));
+
         if (count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         }
+
         return $result;
     }
 
     public function addOrder($params)
     {
-        $result = $this->sendRequest('/orders', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/orders', $params, 'POST');
     }
 
     public function cancelOrder($idorder)
     {
-        $result = $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder, array(), 'DELETE');
     }
 
     public function getOrderProductStatus($idorder)
     {
-        $result = $this->sendRequest('/orders/' . $idorder . '/productstatus');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/productstatus');
     }
 
     public function closeOrder($idorder)
     {
-        $result = $this->sendRequest('/orders/' . $idorder . '/close', null, 'POST');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/close', null, 'POST');
     }
 
     public function processOrder($idorder)
     {
-        $result = $this->sendRequest('/orders/' . $idorder . '/process', null, 'POST');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/process', null, 'POST');
     }
 
     public function addOrderNote($idorder, $note)
     {
-        $result = $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), 'POST');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), 'POST');
     }
 
     public function getOrderTags($idorder)
     {
-        $result = $this->sendRequest('/orders/' . $idorder . '/tags');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/tags');
     }
 
     public function addOrderTag($idorder, $idtag)
@@ -293,8 +266,7 @@ class Client
             'idtag' => $idtag
         );
 
-        $result = $this->sendRequest('/orders/' . $idorder . '/tags', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/tags', $params, 'POST');
     }
 
     /** @deprecated Use the `delete`, stays here for backwards compatibility */
@@ -305,14 +277,12 @@ class Client
 
     public function deleteOrderTag($idorder, $idtag)
     {
-        $result = $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), 'DELETE');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), 'DELETE');
     }
 
     public function updateOrder($idorder, $params)
     {
-        $result = $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
-        return $result;
+        return $this->sendRequest('/orders/' . $idorder, $params, 'PUT');
     }
 
     /*
@@ -320,8 +290,7 @@ class Client
      */
     public function getPicklists($filters = array())
     {
-        $result = $this->sendRequest('/picklists', null, null, $filters);
-        return $result;
+        return $this->sendRequest('/picklists', null, null, $filters);
     }
 
     public function getAllPicklists($filters = array())
@@ -331,41 +300,38 @@ class Client
 
     public function getPicklist($idpicklist)
     {
-        $result = $this->sendRequest('/picklists/' . $idpicklist);
-        return $result;
+        return $this->sendRequest('/picklists/' . $idpicklist);
     }
 
     public function getPicklistByPicklistid($picklistid)
     {
         $result = $this->sendRequest('/picklists?picklistid=' . urlencode($picklistid));
+
         if (count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         }
+
         return $result;
     }
 
     public function closePicklist($idpicklist)
     {
-        $result = $this->sendRequest('/picklists/' . $idpicklist . '/close', null, 'POST');
-        return $result;
+        return $this->sendRequest('/picklists/' . $idpicklist . '/close', null, 'POST');
     }
 
     public function pickallPicklist($idpicklist)
     {
-        $result = $this->sendRequest('/picklists/' . $idpicklist . '/pickall', null, 'POST');
-        return $result;
+        return $this->sendRequest('/picklists/' . $idpicklist . '/pickall', null, 'POST');
     }
 
     public function createShipment($idpicklist, $params)
     {
-        $result = $this->sendRequest('/picklists/' . $idpicklist . '/shipments', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/picklists/' . $idpicklist . '/shipments', $params, 'POST');
     }
 
     public function getShipments($idpicklist)
     {
-        $result = $this->sendRequest('/picklists/' . $idpicklist . '/shipments');
-        return $result;
+        return $this->sendRequest('/picklists/' . $idpicklist . '/shipments');
     }
 
     /*
@@ -373,14 +339,12 @@ class Client
      */
     public function getSuppliers()
     {
-        $result = $this->sendRequest('/suppliers');
-        return $result;
+        return $this->sendRequest('/suppliers');
     }
 
     public function getSupplier($idsupplier)
     {
-        $result = $this->sendRequest('/suppliers/' . $idsupplier);
-        return $result;
+        return $this->sendRequest('/suppliers/' . $idsupplier);
     }
 
     /*
@@ -388,20 +352,17 @@ class Client
      */
     public function getPurchaseorders()
     {
-        $result = $this->sendRequest('/purchaseorders');
-        return $result;
+        return $this->sendRequest('/purchaseorders');
     }
 
     public function getPurchaseorder($idpurchaseorder)
     {
-        $result = $this->sendRequest('/purchaseorders/' . $idpurchaseorder);
-        return $result;
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder);
     }
 
     public function receivePurchaseorderProduct($idpurchaseorder, $params)
     {
-        $result = $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receive', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receive', $params, 'POST');
     }
 
     /*
@@ -409,14 +370,12 @@ class Client
      */
     public function getTags()
     {
-        $result = $this->sendRequest('/tags');
-        return $result;
+        return $this->sendRequest('/tags');
     }
 
     public function getTag($idtag)
     {
-        $result = $this->sendRequest('/tags/' . $idtag);
-        return $result;
+        return $this->sendRequest('/tags/' . $idtag);
     }
 
     /*
@@ -424,14 +383,12 @@ class Client
      */
     public function getVatgroups()
     {
-        $result = $this->sendRequest('/vatgroups');
-        return $result;
+        return $this->sendRequest('/vatgroups');
     }
 
     public function getVatgroup($idvatgroup)
     {
-        $result = $this->sendRequest('/vatgroups/' . $idvatgroup);
-        return $result;
+        return $this->sendRequest('/vatgroups/' . $idvatgroup);
     }
 
     /*
@@ -439,14 +396,12 @@ class Client
      */
     public function getStockHistory()
     {
-        $result = $this->sendRequest('/stockhistory');
-        return $result;
+        return $this->sendRequest('/stockhistory');
     }
 
     public function getStockHistoryOfProduct($idproduct)
     {
-        $result = $this->sendRequest('/stockhistory/' . $idproduct);
-        return $result;
+        return $this->sendRequest('/stockhistory/' . $idproduct);
     }
 
     /*
@@ -454,26 +409,22 @@ class Client
      */
     public function addHook($params)
     {
-        $result = $this->sendRequest('/hooks', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/hooks', $params, 'POST');
     }
 
     public function getHooks()
     {
-        $result = $this->sendRequest('/hooks');
-        return $result;
+        return $this->sendRequest('/hooks');
     }
 
     public function getHook($id)
     {
-        $result = $this->sendRequest('/hooks/' . $id);
-        return $result;
+        return $this->sendRequest('/hooks/' . $id);
     }
 
     public function deleteHook($id)
     {
-        $result = $this->sendRequest('/hooks/' . $id, array(), 'DELETE');
-        return $result;
+        return $this->sendRequest('/hooks/' . $id, array(), 'DELETE');
     }
 
     /*
@@ -481,20 +432,17 @@ class Client
      */
     public function getBackorders($filters = array())
     {
-        $result = $this->sendRequest('/backorders', null, null, $filters);
-        return $result;
+        return $this->sendRequest('/backorders', null, null, $filters);
     }
 
     public function getBackorder($idbackorder)
     {
-        $result = $this->sendRequest('/backorders/' . $idbackorder);
-        return $result;
+        return $this->sendRequest('/backorders/' . $idbackorder);
     }
 
     public function processBackorders()
     {
-        $result = $this->sendRequest('/backorders/process', null, 'POST');
-        return $result;
+        return $this->sendRequest('/backorders/process', null, 'POST');
     }
 
     /*
@@ -502,14 +450,12 @@ class Client
      */
     public function getWarehouses()
     {
-        $result = $this->sendRequest('/warehouses');
-        return $result;
+        return $this->sendRequest('/warehouses');
     }
 
     public function getWarehouse($idwarehouse)
     {
-        $result = $this->sendRequest('/warehouses/' . $idwarehouse);
-        return $result;
+        return $this->sendRequest('/warehouses/' . $idwarehouse);
     }
 
     /*
@@ -517,14 +463,12 @@ class Client
      */
     public function getPricelists()
     {
-        $result = $this->sendRequest('/pricelists');
-        return $result;
+        return $this->sendRequest('/pricelists');
     }
 
     public function getPricelist($idpricelist)
     {
-        $result = $this->sendRequest('/pricelists/' . $idpricelist);
-        return $result;
+        return $this->sendRequest('/pricelists/' . $idpricelist);
     }
 
     /*
@@ -532,8 +476,7 @@ class Client
      */
     public function getShippingProividers()
     {
-        $result = $this->sendRequest('/shippingproviders');
-        return $result;
+        return $this->sendRequest('/shippingproviders');
     }
 
     /*
@@ -562,8 +505,8 @@ class Client
                 return $result;
             }
         }
-        $result = array('success' => true, 'data' => $collection);
-        return $result;
+
+        return array('success' => true, 'data' => $collection);
     }
 
     /**
@@ -573,8 +516,7 @@ class Client
      */
     public function addCompany($params)
     {
-        $result = $this->sendRequest('/companies', $params, 'POST');
-        return $result;
+        return $this->sendRequest('/companies', $params, 'POST');
     }
 
     /**
@@ -632,24 +574,21 @@ class Client
 
         $endpoint = $this->getEndpoint($endpoint, $filters);
 
-        if ($this->debug) {
-            echo 'URL: ' . $this->getUrl($endpoint) . PHP_EOL;
-        }
+        $this->debug('URL: ' . $this->getUrl($endpoint));
 
         curl_setopt($ch, CURLOPT_URL, $this->getUrl($endpoint));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->password);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->apikey . ':' . $this->password);
         curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent . ' ' . $this->clientversion);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
 
         if ($method == 'POST' || $method == 'PUT' || $method == 'DELETE') {
             $data = $this->prepareData($params);
 
-            if ($this->debug)
-                echo 'Data: ' . $data . PHP_EOL;
+            $this->debug('Data: ' . $data);
 
             if ($method == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, true);
@@ -669,16 +608,15 @@ class Client
         $apiresult = curl_exec($ch);
         $headerinfo = curl_getinfo($ch);
 
-        if ($this->debug)
-            echo 'Raw result: ' . $apiresult . PHP_EOL;
+        $this->debug('Raw result: ' . $apiresult);
 
         $apiresult_json = json_decode($apiresult, true);
 
         $result = array();
         $result['success'] = false;
 
-        if ($apiresult === false) // CURL failed
-        {
+        // CURL failed
+        if ($apiresult === false) {
             $result['error'] = true;
             $result['errorcode'] = 0;
             $result['errormessage'] = curl_error($ch);
@@ -687,15 +625,15 @@ class Client
 
         curl_close($ch);
 
-        if (! in_array($headerinfo['http_code'], array('200', '201', '204'))) // API returns error
-        {
+        if (! in_array($headerinfo['http_code'], array('200', '201', '204'))) {
+            // API returns error
             $result['error'] = true;
             $result['errorcode'] = $headerinfo['http_code'];
             if (isset($apiresult)) {
                 $result['errormessage'] = $apiresult;
             }
-        } else // API returns success
-        {
+        } else {
+            // API returns success
             $result['success'] = true;
             $result['data'] = (($apiresult_json === null) ? $apiresult : $apiresult_json);
         }
@@ -710,8 +648,7 @@ class Client
 
     protected function prepareData($params)
     {
-        $data = json_encode($params);
-        return $data;
+        return json_encode($params);
     }
 
     protected function getEndpoint($endpoint, $filters)
@@ -730,5 +667,12 @@ class Client
         }
 
         return $endpoint;
+    }
+
+    protected function debug($message)
+    {
+        if ($this->debug) {
+            echo 'Debug: ' . $message . PHP_EOL;
+        }
     }
 }
