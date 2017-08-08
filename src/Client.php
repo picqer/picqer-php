@@ -208,7 +208,7 @@ class Client
      */
     public function getStockHistories($filters = array())
     {
-        return $this->sendRequest('/stockhistory', $filters);
+        return $this->sendRequest('/stockhistory', null, null, $filters);
     }
 
     public function getStockHistory($idproduct_stock_history)
