@@ -20,7 +20,7 @@ class Client
     protected $apiversion = 'v1';
     protected $useragent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientversion = '0.13.0';
+    protected $clientversion = '0.13.1';
 
     protected $debug = false;
     protected $skipverification = false;
