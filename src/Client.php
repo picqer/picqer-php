@@ -20,7 +20,7 @@ class Client
     protected $apiversion = 'v1';
     protected $useragent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientversion = '0.13.1';
+    protected $clientversion = '0.13.2';
 
     protected $debug = false;
     protected $skipverification = false;
@@ -195,7 +195,7 @@ class Client
 
     public function addProductTag($idproduct, $idtag)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/tags', array("idtag" => $idtag), self::METHOD_POST);
+        return $this->sendRequest('/products/' . $idproduct . '/tags', array('idtag' => $idtag), self::METHOD_POST);
     }
 
     public function deleteProductTag($idproduct, $idtag)
@@ -216,14 +216,14 @@ class Client
         return $this->sendRequest('/stockhistory/' . $idproduct_stock_history);
     }
 
-    public function getStockHistoryForProduct($idproduct)
+    public function getStockHistoryForProduct($idproduct, $offset = 0)
     {
-        return $this->getStockHistories(array('idproduct', $idproduct));
+        return $this->getStockHistories(array('idproduct' => $idproduct, 'offset' => $offset));
     }
 
-    public function getStockHistoryForWarehouse($idwarehouse)
+    public function getStockHistoryForWarehouse($idwarehouse, $offset = 0)
     {
-        return $this->getStockHistories(array('idwarehouse', $idwarehouse));
+        return $this->getStockHistories(array('idwarehouse' => $idwarehouse, 'offset' => $offset));
     }
 
     /*
@@ -283,7 +283,7 @@ class Client
 
     public function addOrderNote($idorder, $note)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/notes', array("note" => $note), self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/notes', array('note' => $note), self::METHOD_POST);
     }
 
     public function getOrderTags($idorder)
