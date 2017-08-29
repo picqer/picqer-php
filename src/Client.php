@@ -98,7 +98,7 @@ class Client
 
     public function updateCustomerAddress($idcustomer, $idaddress, $params)
     {
-        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, self::METHOD_POST);
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, self::METHOD_PUT);
     }
 
     public function deleteCustomerAddress($idcustomer, $idaddress)
