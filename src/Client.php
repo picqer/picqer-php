@@ -317,7 +317,7 @@ class Client
     }
 
     /*
-     * Orders
+     * Picklists
      */
     public function getPicklists($filters = array())
     {
@@ -612,6 +612,39 @@ class Client
     public function getTemplates()
     {
         return $this->sendRequest('/templates');
+    }
+
+    /*
+     * Locations
+     */
+    public function getLocations($filters = array())
+    {
+        return $this->sendRequest('/locations', array(), self::METHOD_GET, $filters);
+    }
+
+    public function getLocation($id)
+    {
+        return $this->sendRequest('/locations/' . $id);
+    }
+
+    public function addLocation($params, $autoLinkToParent = false)
+    {
+        return $this->sendRequest('/locations', $params, self::METHOD_POST, array('auto_link_to_parent' => $autoLinkToParent));
+    }
+
+    public function updateLocation($id, $params)
+    {
+        return $this->sendRequest('/locations/' . $id, $params, self::METHOD_PUT);
+    }
+
+    public function deleteLocation($id)
+    {
+        return $this->sendRequest('/locations/' . $id, array(), self::METHOD_DELETE);
+    }
+
+    public function getProductsOnLocation($id)
+    {
+        return $this->sendRequest('/locations/' . $id . '/products', array(), self::METHOD_GET);
     }
 
 
