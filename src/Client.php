@@ -408,9 +408,9 @@ class Client
     /*
      * Purchase orders
      */
-    public function getPurchaseorders()
+    public function getPurchaseorders($filters = array())
     {
-        return $this->sendRequest('/purchaseorders');
+        return $this->sendRequest('/purchaseorders', null, null, $filters);
     }
 
     public function getPurchaseorder($idpurchaseorder)
