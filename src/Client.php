@@ -203,6 +203,34 @@ class Client
         return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), self::METHOD_DELETE);
     }
 
+    public function getProductParts($idproduct)
+    {
+        return $this->sendRequest('/products/'.$idproduct.'/parts');
+    }
+
+    public function getProductPart($idproduct, $idproduct_part)
+    {
+        return $this->sendRequest('/products/'.$idproduct.'/parts/'.$idproduct_part);
+    }
+
+    public function addProductPart($idproduct, $params)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/parts', $params, self::METHOD_POST);
+    }
+
+    public function updateProductPartAmount($idproduct, $idproductpart, $amount)
+    {
+        $params = array(
+            'amount' => $amount,
+        );
+        return $this->sendRequest('/products/' . $idproduct . '/parts/'.$idproductpart, $params, self::METHOD_PUT);
+    }
+
+    public function deleteProductPart($idproduct, $idproductpart)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/parts/' . $idproductpart, array(), self::METHOD_DELETE);
+    }
+
     /*
      * Stock history
      */
