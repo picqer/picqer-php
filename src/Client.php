@@ -436,6 +436,11 @@ class Client
     /*
      * Purchase orders
      */
+    public function addPurchaseorder($params)
+    {
+        return $this->sendRequest('/purchaseorders', $params, self::METHOD_POST);
+    }
+
     public function getPurchaseorders($filters = array())
     {
         return $this->sendRequest('/purchaseorders', null, null, $filters);
