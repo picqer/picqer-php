@@ -692,6 +692,7 @@ class Client
         $functionname = 'get' . ucfirst($entity) . 's';
 
         $i = 0;
+        $startTime = time();
         while ($gotAll == false) {
             $filters['offset'] = ($i * 100);
             $result = $this->$functionname($filters);
@@ -701,6 +702,9 @@ class Client
                 }
                 foreach ($result['data'] as $item) {
                     $collection[] = $item;
+                }
+                if ($result['rate-limit-remaining'] === 0) {
+                    sleep(60 - ((time() - $startTime) % 60));
                 }
                 $i++;
             } else {
