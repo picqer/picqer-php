@@ -757,6 +757,18 @@ class Client
         return $this->sendRequest('/locations/' . $id . '/products', array(), self::METHOD_GET);
     }
 
+    /*
+     * Stats
+     */
+    public function getStatsList()
+    {
+        return $this->sendRequest('/stats');
+    }
+
+    public function getStat($key, $params)
+    {
+        return $this->sendRequest('/stats/' . $key,  $params);
+    }
 
     /*
      * General
