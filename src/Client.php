@@ -477,6 +477,83 @@ class Client
     }
 
     /*
+     * Returns
+     */
+
+    public function getReturns($filters = array())
+    {
+        return $this->sendRequest('/returns', null, null, $filters);
+    }
+
+    public function getAllReturns($filters = array())
+    {
+        return $this->getAllResults('return', $filters);
+    }
+
+    public function getReturn($idreturn)
+    {
+        return $this->sendRequest('/returns/' . $idreturn);
+    }
+
+    public function addReturn($params)
+    {
+        return $this->sendRequest('/returns', $params, self::METHOD_POST);
+    }
+
+    public function updateReturn($idreturn, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn, $params, self::METHOD_PUT);
+    }
+
+    /*
+     * Returned Products
+     */
+
+    public function getReturnedProducts($idreturn)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/returned_products');
+    }
+
+    public function addReturnedProducts($idreturn, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/returned_products', $params, self::METHOD_POST);
+    }
+
+    public function updateReturnedProduct($idreturn, $idreturn_product, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/returned_products/' . $idreturn_product, $params, self::METHOD_PUT);
+    }
+
+    public function removeReturnedProduct($idreturn, $idreturn_product)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/returned_products/' . $idreturn_product, null,self::METHOD_DELETE);
+    }
+
+    /*
+     * Replacement Products
+     */
+
+    public function getReplacementProducts($idreturn)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/replacement_products');
+    }
+
+    public function addReplacementProducts($idreturn, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/replacement_products', $params, self::METHOD_POST);
+    }
+
+    public function updateReplacementProduct($idreturn, $idreturn_product_replacement, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/replacement_products/' . $idreturn_product_replacement, $params, self::METHOD_PUT);
+    }
+
+    public function removeReplacementProduct($idreturn, $idreturn_product_replacement)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/replacement_products/' . $idreturn_product_replacement, null,self::METHOD_DELETE);
+    }
+
+    /*
      * Tags
      */
     public function getTags()
