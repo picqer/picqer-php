@@ -4,6 +4,8 @@ require('../src/Client.php');
 
 // Start 
 $apiClient = new Picqer\Api\Client('--clientsubdomain--', '--apikey--');
+$apiClient->enableRetryOnRateLimitHit();
+$apiClient->setUseragent('My amazing app (dev@example.org)');
 
 // Retrieve all orders from Picqer account
 $orders = $apiClient->getOrders();

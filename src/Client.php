@@ -20,12 +20,14 @@ class Client
     protected $apiVersion = 'v1';
     protected $userAgent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientVersion = '0.13.2';
+    protected $clientVersion = '0.14.0';
 
     protected $debug = false;
     protected $skipSslVerification = false;
 
     protected $timeoutInSeconds = 60;
+    protected $waitOnRateLimit = false;
+    protected $sleepTimeOnRateLimitHitInSeconds = 20;
 
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
@@ -885,6 +887,11 @@ class Client
         $this->timeoutInSeconds = $timeoutInSeconds;
     }
 
+    public function enableRetryOnRateLimitHit()
+    {
+        $this->waitOnRateLimit = true;
+    }
+
     public function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
         $endpoint = $this->getEndpoint($endpoint, $filters);
@@ -935,19 +942,23 @@ class Client
         curl_close($curlSession);
 
         if ($headerInfo['http_code'] == '429') {
-            throw new RateLimitException('Rate limit exceeded. Try again later.');
-        } elseif (! in_array($headerInfo['http_code'], ['200', '201', '204'])) {
-            // API returns error
+            $result = $this->handleRateLimitReached($endpoint, $params, $method, $filters);
+        }
+
+        // API returns error
+        if (! in_array($headerInfo['http_code'], ['200', '201', '204'])) {
             $result['error'] = true;
             $result['errorcode'] = $headerInfo['http_code'];
             if (isset($apiResult)) {
                 $result['errormessage'] = $apiResult;
             }
-        } else {
-            // API returns success
-            $result['success'] = true;
-            $result['data'] = (($apiResultJson === null) ? $apiResult : $apiResultJson);
+
+            return $result;
         }
+
+        // API returns success
+        $result['success'] = true;
+        $result['data'] = (($apiResultJson === null) ? $apiResult : $apiResultJson);
 
         return $result;
     }
@@ -1028,5 +1039,18 @@ class Client
             curl_setopt($curlSession, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curlSession, CURLOPT_SSL_VERIFYHOST, false);
         }
+    }
+
+    protected function handleRateLimitReached($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
+    {
+        if (! $this->waitOnRateLimit) {
+            throw new RateLimitException('Rate limit exceeded. Try again later.');
+        }
+
+        $this->debug('Rate limit hit, sleeping and trying again');
+
+        sleep($this->sleepTimeOnRateLimitHitInSeconds);
+
+        return $this->sendRequest($endpoint, $params, $method, $filters);
     }
 }
