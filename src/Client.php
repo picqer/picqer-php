@@ -756,14 +756,14 @@ class Client
     /*
      * Stats
      */
-    public function getStatsList()
+    public function getStats()
     {
         return $this->sendRequest('/stats');
     }
 
-    public function getStat($key, $params)
+    public function getStat($key)
     {
-        return $this->sendRequest('/stats/' . $key,  $params);
+        return $this->sendRequest('/stats/' . $key);
     }
 
     /*
@@ -885,7 +885,7 @@ class Client
         $this->timeoutInSeconds = $timeoutInSeconds;
     }
 
-    protected function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
+    public function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
         $endpoint = $this->getEndpoint($endpoint, $filters);
         $this->debug('URL: ' . $this->getUrl($endpoint));
