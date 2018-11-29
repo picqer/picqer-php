@@ -3,8 +3,13 @@
 require('../src/Client.php');
 
 // Start 
-$apiclient = new Picqer\Api\Client('--clientsubdomain--', '--apikey--');
+$apiClient = new Picqer\Api\Client('--clientsubdomain--', '--apikey--');
 
 // Retrieve all orders from Picqer account
-$orders = $apiclient->getOrders();
+$orders = $apiClient->getOrders();
 var_dump($orders);
+
+// Alternative when there are a lot of orders
+foreach ($apiClient->getResultGenerator('order') as $order) {
+    var_dump($order);
+}

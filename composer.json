@@ -1,14 +1,14 @@
 {
     "name": "picqer/api-client",
-    "type": "library",
     "description": "A PHP Client for the Picqer API",
+    "type": "library",
     "keywords": [
         "picqer",
         "api",
         "php",
         "wms"
     ],
-    "homepage": "http://github.com/picqer/picqer-php",
+    "homepage": "https://github.com/picqer/picqer-php",
     "license": "MIT",
     "authors": [
         {
@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.6.0",
         "ext-curl": "*"
     },
     "autoload": {

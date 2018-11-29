@@ -11,19 +11,19 @@ namespace Picqer\Api;
 class Client
 {
     protected $company;
-    protected $apikey;
+    protected $apiKey;
     protected $password;
 
-    protected $apihost = 'picqer.com';
     protected $protocol = 'https';
-    protected $apilocation = '/api';
-    protected $apiversion = 'v1';
-    protected $useragent = 'Picqer PHP API Client (picqer.com)';
+    protected $apiHost = 'picqer.com';
+    protected $apiLocation = '/api';
+    protected $apiVersion = 'v1';
+    protected $userAgent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientversion = '0.13.2';
+    protected $clientVersion = '0.13.2';
 
     protected $debug = false;
-    protected $skipverification = false;
+    protected $skipSslVerification = false;
 
     protected $timeoutInSeconds = 60;
 
@@ -37,19 +37,19 @@ class Client
     public function __construct($company, $apikey = '', $password = 'X')
     {
         $this->company = $company;
-        $this->apikey = $apikey;
+        $this->apiKey = $apikey;
         $this->password = $password; // Only needed with legacy integrations
     }
 
     /*
      * Customers
      */
-    public function getCustomers($filters = array())
+    public function getCustomers($filters = [])
     {
         return $this->sendRequest('/customers', null, null, $filters);
     }
 
-    public function getAllCustomers($filters = array())
+    public function getAllCustomers($filters = [])
     {
         return $this->getAllResults('customer', $filters);
     }
@@ -103,19 +103,18 @@ class Client
 
     public function deleteCustomerAddress($idcustomer, $idaddress)
     {
-        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, [], self::METHOD_DELETE);
     }
 
     /*
      * Products
      */
-    public function getProducts($filters = array())
+    public function getProducts($filters = [])
     {
-        $endpoint = '/products';
-        return $this->sendRequest($endpoint, null, null, $filters);
+        return $this->sendRequest('/products', null, null, $filters);
     }
 
-    public function getAllProducts($filters = array())
+    public function getAllProducts($filters = [])
     {
         return $this->getAllResults('product', $filters);
     }
@@ -175,12 +174,12 @@ class Client
 
     public function addImageToProduct($idproduct, $base64Image)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/images', array('image' => $base64Image), self::METHOD_POST);
+        return $this->sendRequest('/products/' . $idproduct . '/images', ['image' => $base64Image], self::METHOD_POST);
     }
 
     public function deleteImageFromProduct($idproduct, $idproduct_image)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, [], self::METHOD_DELETE);
     }
 
     public function updateProduct($idproduct, $params)
@@ -195,12 +194,12 @@ class Client
 
     public function addProductTag($idproduct, $idtag)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/tags', array('idtag' => $idtag), self::METHOD_POST);
+        return $this->sendRequest('/products/' . $idproduct . '/tags', ['idtag' => $idtag], self::METHOD_POST);
     }
 
     public function deleteProductTag($idproduct, $idtag)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
     public function getProductParts($idproduct)
@@ -220,21 +219,20 @@ class Client
 
     public function updateProductPartAmount($idproduct, $idproductpart, $amount)
     {
-        $params = array(
-            'amount' => $amount,
-        );
+        $params = ['amount' => $amount];
+        
         return $this->sendRequest('/products/' . $idproduct . '/parts/'.$idproductpart, $params, self::METHOD_PUT);
     }
 
     public function deleteProductPart($idproduct, $idproductpart)
     {
-        return $this->sendRequest('/products/' . $idproduct . '/parts/' . $idproductpart, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/products/' . $idproduct . '/parts/' . $idproductpart, [], self::METHOD_DELETE);
     }
 
     /*
      * Stock history
      */
-    public function getStockHistories($filters = array())
+    public function getStockHistories($filters = [])
     {
         return $this->sendRequest('/stockhistory', null, null, $filters);
     }
@@ -246,23 +244,23 @@ class Client
 
     public function getStockHistoryForProduct($idproduct, $offset = 0)
     {
-        return $this->getStockHistories(array('idproduct' => $idproduct, 'offset' => $offset));
+        return $this->getStockHistories(['idproduct' => $idproduct, 'offset' => $offset]);
     }
 
     public function getStockHistoryForWarehouse($idwarehouse, $offset = 0)
     {
-        return $this->getStockHistories(array('idwarehouse' => $idwarehouse, 'offset' => $offset));
+        return $this->getStockHistories(['idwarehouse' => $idwarehouse, 'offset' => $offset]);
     }
 
     /*
      * Orders
      */
-    public function getOrders($filters = array())
+    public function getOrders($filters = [])
     {
         return $this->sendRequest('/orders', null, null, $filters);
     }
 
-    public function getAllOrders($filters = array())
+    public function getAllOrders($filters = [])
     {
         return $this->getAllResults('order', $filters);
     }
@@ -290,7 +288,7 @@ class Client
 
     public function cancelOrder($idorder)
     {
-        return $this->sendRequest('/orders/' . $idorder, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/orders/' . $idorder, [], self::METHOD_DELETE);
     }
 
     public function getOrderProductStatus($idorder)
@@ -311,7 +309,7 @@ class Client
 
     public function addOrderNote($idorder, $note)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/notes', array('note' => $note), self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/notes', ['note' => $note], self::METHOD_POST);
     }
 
     public function getOrderTags($idorder)
@@ -321,9 +319,7 @@ class Client
 
     public function addOrderTag($idorder, $idtag)
     {
-        $params = array(
-            'idtag' => $idtag
-        );
+        $params = ['idtag' => $idtag];
 
         return $this->sendRequest('/orders/' . $idorder . '/tags', $params, self::METHOD_POST);
     }
@@ -336,7 +332,7 @@ class Client
 
     public function deleteOrderTag($idorder, $idtag)
     {
-        return $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
     public function updateOrder($idorder, $params)
@@ -347,12 +343,12 @@ class Client
     /*
      * Picklists
      */
-    public function getPicklists($filters = array())
+    public function getPicklists($filters = [])
     {
         return $this->sendRequest('/picklists', null, null, $filters);
     }
 
-    public function getAllPicklists($filters = array())
+    public function getAllPicklists($filters = [])
     {
         return $this->getAllResults('picklist', $filters);
     }
@@ -385,7 +381,7 @@ class Client
 
     public function assignPicklistToUser($idpicklist, $iduser)
     {
-        $params = array('iduser' => $iduser);
+        $params = ['iduser' => $iduser];
         return $this->sendRequest('/picklists/' . $idpicklist . '/assign', $params, self::METHOD_POST);
     }
 
@@ -396,7 +392,7 @@ class Client
 
     public function snoozePicklist($idpicklist, $snooze_until = null)
     {
-        $params = array('snooze_until' => $snooze_until);
+        $params = ['snooze_until' => $snooze_until];
         return $this->sendRequest('/picklists/' . $idpicklist . '/snooze', $params, self::METHOD_POST);
     }
 
@@ -441,7 +437,7 @@ class Client
         return $this->sendRequest('/purchaseorders', $params, self::METHOD_POST);
     }
 
-    public function getPurchaseorders($filters = array())
+    public function getPurchaseorders($filters = [])
     {
         return $this->sendRequest('/purchaseorders', null, null, $filters);
     }
@@ -480,12 +476,12 @@ class Client
      * Returns
      */
 
-    public function getReturns($filters = array())
+    public function getReturns($filters = [])
     {
         return $this->sendRequest('/returns', null, null, $filters);
     }
 
-    public function getAllReturns($filters = array())
+    public function getAllReturns($filters = [])
     {
         return $this->getAllResults('return', $filters);
     }
@@ -599,13 +595,13 @@ class Client
 
     public function deleteHook($id)
     {
-        return $this->sendRequest('/hooks/' . $id, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/hooks/' . $id, [], self::METHOD_DELETE);
     }
 
     /*
      * Backorders
      */
-    public function getBackorders($filters = array())
+    public function getBackorders($filters = [])
     {
         return $this->sendRequest('/backorders', null, null, $filters);
     }
@@ -727,9 +723,9 @@ class Client
     /*
      * Locations
      */
-    public function getLocations($filters = array())
+    public function getLocations($filters = [])
     {
-        return $this->sendRequest('/locations', array(), self::METHOD_GET, $filters);
+        return $this->sendRequest('/locations', [], self::METHOD_GET, $filters);
     }
 
     public function getLocation($id)
@@ -739,7 +735,7 @@ class Client
 
     public function addLocation($params, $autoLinkToParent = false)
     {
-        return $this->sendRequest('/locations', $params, self::METHOD_POST, array('auto_link_to_parent' => $autoLinkToParent));
+        return $this->sendRequest('/locations', $params, self::METHOD_POST, ['auto_link_to_parent' => $autoLinkToParent]);
     }
 
     public function updateLocation($id, $params)
@@ -749,22 +745,22 @@ class Client
 
     public function deleteLocation($id)
     {
-        return $this->sendRequest('/locations/' . $id, array(), self::METHOD_DELETE);
+        return $this->sendRequest('/locations/' . $id, [], self::METHOD_DELETE);
     }
 
     public function getProductsOnLocation($id)
     {
-        return $this->sendRequest('/locations/' . $id . '/products', array(), self::METHOD_GET);
+        return $this->sendRequest('/locations/' . $id . '/products', [], self::METHOD_GET);
     }
 
 
     /*
      * General
      */
-    public function getAllResults($entity, $filters = array())
+    public function getAllResults($entity, $filters = [])
     {
         $gotAll = false;
-        $collection = array();
+        $collection = [];
 
         $functionname = 'get' . ucfirst($entity) . 's';
 
@@ -785,33 +781,35 @@ class Client
             }
         }
 
-        return array('success' => true, 'data' => $collection);
+        return ['success' => true, 'data' => $collection];
     }
     
     /*
      * Yield all results from the API
      */
-    public function getResultGenerator($entity, $filters = array())
+    public function getResultGenerator($entity, $filters = [])
     {
-        $gotAll = false;
-
-        $functionname = 'get' . ucfirst($entity) . 's';
+        $methodName = 'get' . ucfirst($entity) . 's';
 
         $i = 0;
-        while ($gotAll == false) {
+        $gotAll = false;
+        while ($gotAll === false) {
             $filters['offset'] = ($i * 100);
-            $result = $this->$functionname($filters);
-            if (isset($result['success']) && $result['success'] && isset($result['data'])) {
-                if (count($result['data']) < 100) {
-                    $gotAll = true;
-                }
-                foreach ($result['data'] as $item) {
-                    yield $item;
-                }
-                $i++;
-            } else {
+
+            $result = $this->$methodName($filters);
+            if (! isset($result['success']) || ! isset($result['data']) || $result['success'] !== true) {
                 throw new Exception("Invalid API response: " . json_encode($result));
             }
+
+            if (count($result['data']) < 100) {
+                $gotAll = true;
+            }
+
+            foreach ($result['data'] as $item) {
+                yield $item;
+            }
+
+            $i++;
         }
     }
 
@@ -819,6 +817,7 @@ class Client
      * Creates a new company account for Picqer
      * @param $params
      * @return mixed
+     * @throws RateLimitException
      */
     public function addCompany($params)
     {
@@ -838,15 +837,15 @@ class Client
      */
     public function disableSslVerification()
     {
-        $this->skipverification = true;
+        $this->skipSslVerification = true;
     }
 
     /**
-     * @param string $apihost
+     * @param string $apiHost
      */
-    public function setApihost($apihost)
+    public function setApihost($apiHost)
     {
-        $this->apihost = $apihost;
+        $this->apiHost = $apiHost;
     }
 
     /**
@@ -858,11 +857,11 @@ class Client
     }
 
     /**
-     * @param string $useragent
+     * @param string $userAgent
      */
-    public function setUseragent($useragent)
+    public function setUseragent($userAgent)
     {
-        $this->useragent = $useragent;
+        $this->userAgent = $userAgent;
     }
 
     /**
@@ -874,54 +873,46 @@ class Client
         $this->timeoutInSeconds = $timeoutInSeconds;
     }
 
-    protected function sendRequest($endpoint, $params = array(), $method = self::METHOD_GET, $filters = array())
+    protected function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
-        $curlSession = curl_init();
-
         $endpoint = $this->getEndpoint($endpoint, $filters);
-
         $this->debug('URL: ' . $this->getUrl($endpoint));
 
-        curl_setopt($curlSession, CURLOPT_URL, $this->getUrl($endpoint));
-        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlSession, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
+        $curlSession = curl_init();
+
         curl_setopt($curlSession, CURLOPT_HEADER, false);
+        curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($curlSession, CURLOPT_URL, $this->getUrl($endpoint));
+        curl_setopt($curlSession, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
+
         curl_setopt($curlSession, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curlSession, CURLOPT_USERPWD, $this->apikey . ':' . $this->password);
-        curl_setopt($curlSession, CURLOPT_USERAGENT, $this->useragent . ' ' . $this->clientversion);
-        curl_setopt($curlSession, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Accept: application/json'));
+        curl_setopt($curlSession, CURLOPT_USERPWD, $this->apiKey . ':' . $this->password);
+
+        curl_setopt($curlSession, CURLOPT_USERAGENT, $this->userAgent . ' ' . $this->clientVersion);
+        curl_setopt($curlSession, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Accept: application/json']);
         curl_setopt($curlSession, CURLOPT_HEADERFUNCTION, function ($curl, $header) {
             $this->rawResponseHeaders[] = $header;
             return strlen($header);
         });
 
-        if (in_array($method, array(self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE))) {
-            $data = $this->prepareData($params);
-            $this->debug('Data: ' . $data);
+        $this->setPostData($curlSession, $method, $params);
+        $this->setSslVerification($curlSession);
 
-            curl_setopt($curlSession, CURLOPT_CUSTOMREQUEST, $method);
-            curl_setopt($curlSession, CURLOPT_POSTFIELDS, $data);
-        }
+        $apiResult = curl_exec($curlSession);
+        $headerInfo = curl_getinfo($curlSession);
 
-        if ($this->skipverification) {
-            curl_setopt($curlSession, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curlSession, CURLOPT_SSL_VERIFYHOST, false);
-        }
+        $this->debug('Raw result: ' . $apiResult);
 
-        $apiresult = curl_exec($curlSession);
-        $headerinfo = curl_getinfo($curlSession);
+        $apiResultJson = json_decode($apiResult, true);
+        $apiResultHeaders = $this->parseRawHeaders();
 
-        $this->debug('Raw result: ' . $apiresult);
-
-        $apiresult_json = json_decode($apiresult, true);
-        $apiresult_headers = $this->parseRawHeaders();
-
-        $result = array();
+        $result = [];
         $result['success'] = false;
-        $result['rate-limit-remaining'] = (array_key_exists('X-RateLimit-Remaining', $apiresult_headers)) ? $apiresult_headers['X-RateLimit-Remaining'] : null;
+        $result['rate-limit-remaining'] = $this->getRemainingRateLimit($apiResultHeaders);
 
         // CURL failed
-        if ($apiresult === false) {
+        if ($apiResult === false) {
             $result['error'] = true;
             $result['errorcode'] = 0;
             $result['errormessage'] = curl_error($curlSession);
@@ -931,19 +922,19 @@ class Client
 
         curl_close($curlSession);
 
-        if ($headerinfo['http_code'] == '429') {
+        if ($headerInfo['http_code'] == '429') {
             throw new RateLimitException('Rate limit exceeded. Try again later.');
-        } elseif (! in_array($headerinfo['http_code'], array('200', '201', '204'))) {
+        } elseif (! in_array($headerInfo['http_code'], ['200', '201', '204'])) {
             // API returns error
             $result['error'] = true;
-            $result['errorcode'] = $headerinfo['http_code'];
-            if (isset($apiresult)) {
-                $result['errormessage'] = $apiresult;
+            $result['errorcode'] = $headerInfo['http_code'];
+            if (isset($apiResult)) {
+                $result['errormessage'] = $apiResult;
             }
         } else {
             // API returns success
             $result['success'] = true;
-            $result['data'] = (($apiresult_json === null) ? $apiresult : $apiresult_json);
+            $result['data'] = (($apiResultJson === null) ? $apiResult : $apiResultJson);
         }
 
         return $result;
@@ -951,7 +942,7 @@ class Client
 
     protected function getUrl($endpoint)
     {
-        return $this->protocol . '://' . $this->company . '.' . $this->apihost . $this->apilocation . '/' . $this->apiversion . $endpoint;
+        return $this->protocol . '://' . $this->company . '.' . $this->apiHost . $this->apiLocation . '/' . $this->apiVersion . $endpoint;
     }
 
     protected function prepareData($params)
@@ -986,7 +977,7 @@ class Client
 
     protected function parseRawHeaders()
     {
-        $parsedHeaders = array();
+        $parsedHeaders = [];
 
         foreach ($this->rawResponseHeaders as $header) {
             $headerPieces = explode(':', $header, 2);
@@ -999,5 +990,31 @@ class Client
         }
 
         return $parsedHeaders;
+    }
+
+    protected function getRemainingRateLimit(array $apiResultHeaders)
+    {
+        return (array_key_exists('X-RateLimit-Remaining', $apiResultHeaders)) ? $apiResultHeaders['X-RateLimit-Remaining'] : null;
+    }
+
+    protected function setPostData($curlSession, $method, $params)
+    {
+        if (! in_array($method, [self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE])) {
+            return;
+        }
+
+        $data = $this->prepareData($params);
+        $this->debug('Data: ' . $data);
+
+        curl_setopt($curlSession, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curlSession, CURLOPT_POSTFIELDS, $data);
+    }
+
+    protected function setSslVerification($curlSession)
+    {
+        if ($this->skipSslVerification) {
+            curl_setopt($curlSession, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curlSession, CURLOPT_SSL_VERIFYHOST, false);
+        }
     }
 }
