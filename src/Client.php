@@ -787,6 +787,33 @@ class Client
 
         return array('success' => true, 'data' => $collection);
     }
+    
+    /*
+     * Yield all results from the API
+     */
+    public function getResultGenerator($entity, $filters = array())
+    {
+        $gotAll = false;
+
+        $functionname = 'get' . ucfirst($entity) . 's';
+
+        $i = 0;
+        while ($gotAll == false) {
+            $filters['offset'] = ($i * 100);
+            $result = $this->$functionname($filters);
+            if (isset($result['success']) && $result['success'] && isset($result['data'])) {
+                if (count($result['data']) < 100) {
+                    $gotAll = true;
+                }
+                foreach ($result['data'] as $item) {
+                    yield $item;
+                }
+                $i++;
+            } else {
+                throw new Exception("Invalid API response: " . json_encode($result));
+            }
+        }
+    }
 
     /**
      * Creates a new company account for Picqer
