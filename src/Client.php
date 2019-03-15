@@ -298,6 +298,11 @@ class Client
         return $this->sendRequest('/orders/' . $idorder . '/productstatus');
     }
 
+    public function getOrderBackorders($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/backorders');
+    }
+
     /** @deprecated Use `processOrder`, still here for backwards compatibility */
     public function closeOrder($idorder)
     {
