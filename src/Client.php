@@ -231,7 +231,7 @@ class Client
         return $this->sendRequest('/products/' . $idproduct . '/parts/' . $idproductpart, [], self::METHOD_DELETE);
     }
 
-    public function getLocationsForProduct($idproduct)
+    public function getProductLocations($idproduct)
     {
         return $this->sendRequest('/products/' . $idproduct . '/locations');
     }
