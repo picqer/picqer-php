@@ -231,6 +231,23 @@ class Client
         return $this->sendRequest('/products/' . $idproduct . '/parts/' . $idproductpart, [], self::METHOD_DELETE);
     }
 
+    public function getLocationsForProduct($idproduct)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/locations');
+    }
+
+    public function linkProductToLocation($idproduct, $idlocation)
+    {
+        $params = array('idlocation' => $idlocation);
+
+        return $this->sendRequest('/products/' . $idproduct . '/locations', $params, self::METHOD_POST);
+    }
+
+    public function unlinkProductFromLocation($idproduct, $idlocation)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/locations/' . $idlocation, array(), self::METHOD_DELETE);
+    }
+
     /*
      * Stock history
      */
@@ -434,6 +451,16 @@ class Client
     public function getSupplier($idsupplier)
     {
         return $this->sendRequest('/suppliers/' . $idsupplier);
+    }
+
+    public function addSupplier($params)
+    {
+        return $this->sendRequest('/suppliers', $params, self::METHOD_POST);
+    }
+
+    public function updateSupplier($idsupplier, $params)
+    {
+        return $this->sendRequest('/suppliers/' . $idsupplier, $params, self::METHOD_PUT);
     }
 
     /*
@@ -733,6 +760,11 @@ class Client
     public function getLocations($filters = [])
     {
         return $this->sendRequest('/locations', [], self::METHOD_GET, $filters);
+    }
+
+    public function getAllLocations($filters = array())
+    {
+        return $this->getAllResults('location', $filters);
     }
 
     public function getLocation($id)
