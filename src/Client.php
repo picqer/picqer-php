@@ -443,9 +443,14 @@ class Client
     /*
      * Suppliers
      */
-    public function getSuppliers()
+    public function getSuppliers($filters = [])
     {
-        return $this->sendRequest('/suppliers');
+        return $this->sendRequest('/suppliers', null, null, $filters);
+    }
+    
+    public function getAllSuppliers($filters = [])
+    {
+        return $this->getAllResults('supplier', $filters);
     }
 
     public function getSupplier($idsupplier)
