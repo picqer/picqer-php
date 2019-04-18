@@ -72,6 +72,33 @@ When you try another request, the request will fail. This client will throw you 
 
 We also have an option `$apiClient->enableRetryOnRateLimitHit()` you can use to enable retry's of requests when you hit a rate limit. When the client hits the rate limit, it will sleep for 20 seconds and try the same request again. 
 
+## Webhooks helper
+This client also contains a helper for receiving webhooks, including a signature checker. This is included in the `PicqerWebhook` class.
+
+To receive a webhook, you only need the following:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+$webhook = Picqer\Api\PicqerWebhook::retrieve();
+
+echo 'Hook received: ' . $webhook->getName() . ' that was triggered at ' . $webhook->getEventTriggeredAt() . PHP_EOL;
+echo $webhook->getData();
+```
+
+We recommend using signature validation to be sure the webhook was sent by Picqer. Create a hook with a secret, then check the signature of the webhook with that secret as follows:
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+$webhook = Picqer\Api\PicqerWebhook::retrieveWithSecret('your-secret');
+```
+
+This will throw an `WebhookSignatureMismatchException` if the secret or signatures do not match.
 
 ## Support
 Need support implementing the Picqer API? Feel free to [contact us](https://picqer.com/contact)
