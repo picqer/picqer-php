@@ -8,7 +8,7 @@ $apiClient->enableRetryOnRateLimitHit();
 $apiClient->setUseragent('My amazing app (dev@example.org)');
 
 // Retrieve the previously inserted product
-$product = $apiClient->getProductsByProductcode('DKS-092383');
+$product = $apiClient->getProductByProductcode('DKS-092383');
 
 // Compose the put data
 // Note: if one would like to change a product field
