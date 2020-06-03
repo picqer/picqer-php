@@ -591,9 +591,14 @@ class Client
     /*
      * Tags
      */
-    public function getTags()
+    public function getTags($filters = [])
     {
-        return $this->sendRequest('/tags');
+        return $this->sendRequest('/tags', [], self::METHOD_GET, $filters);
+    }
+    
+    public function getAllTags($filters = [])
+    {
+        return $this->getAllResults('tag', $filters);
     }
 
     public function getTag($idtag)
