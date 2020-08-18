@@ -397,6 +397,11 @@ class Client
 
         return $result;
     }
+    
+    public function updatePicklist($idpicklist, $params)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist, $params, self::METHOD_PUT);
+    }
 
     public function closePicklist($idpicklist)
     {
