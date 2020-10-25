@@ -20,7 +20,7 @@ class Client
     protected $apiVersion = 'v1';
     protected $userAgent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientVersion = '0.21.1';
+    protected $clientVersion = '0.22.0';
 
     protected $debug = false;
     protected $skipSslVerification = false;
@@ -142,6 +142,16 @@ class Client
     public function addProduct($params)
     {
         return $this->sendRequest('/products', $params, self::METHOD_POST);
+    }
+
+    public function inactivateProduct($idproduct)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/inactivate', [], self::METHOD_POST);
+    }
+
+    public function activateProduct($idproduct)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/activate', [], self::METHOD_POST);
     }
 
     public function getProductStock($idproduct)
@@ -305,9 +315,9 @@ class Client
         return $this->sendRequest('/orders', $params, self::METHOD_POST);
     }
 
-    public function cancelOrder($idorder)
+    public function cancelOrder($idorder, $params = [])
     {
-        return $this->sendRequest('/orders/' . $idorder, [], self::METHOD_DELETE);
+        return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_DELETE);
     }
 
     public function getOrderProductStatus($idorder)
@@ -329,6 +339,11 @@ class Client
     public function processOrder($idorder)
     {
         return $this->sendRequest('/orders/' . $idorder . '/process', null, self::METHOD_POST);
+    }
+
+    public function getOrderNotes($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/notes');
     }
 
     public function addOrderNote($idorder, $note)
@@ -364,6 +379,21 @@ class Client
         return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_PUT);
     }
 
+    public function allocateStockForOrder($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/allocate', null, self::METHOD_POST);
+    }
+
+    public function deallocateStockForOrder($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/deallocate', null, self::METHOD_POST);
+    }
+
+    public function prioritiseOrder($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/prioritise', null, self::METHOD_POST);
+    }
+
     /*
      * Picklists
      */
@@ -393,9 +423,29 @@ class Client
         return $result;
     }
 
+    public function updatePicklist($idpicklist, $params)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist, $params, self::METHOD_PUT);
+    }
+
     public function closePicklist($idpicklist)
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/close', null, self::METHOD_POST);
+    }
+
+    public function cancelPicklist($idpicklist)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist . '/cancel', null, self::METHOD_POST);
+    }
+
+    public function pickProductOnPicklist($idpicklist, $product, $amount)
+    {
+        $params = [
+            'product' => $product,
+            'amount' => $amount
+        ];
+
+        return $this->sendRequest('/picklists/' . $idpicklist . '/pick', $params, self::METHOD_POST);
     }
 
     public function pickallPicklist($idpicklist)
@@ -496,6 +546,39 @@ class Client
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/cancel', null, self::METHOD_POST);
     }
 
+    public function getPurchaseorderProducts($idpurchaseorder)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products');
+    }
+
+    public function addProductToPurchaseorder($idpurchaseorder, $idproduct, $amount, $price = null, $deliverydate = null)
+    {
+        $params = [
+            'idproduct' => $idproduct,
+            'amount' => $amount
+        ];
+
+        if (! is_null($price)) {
+            $params['price'] = $price;
+        }
+
+        if (! is_null($deliverydate)) {
+            $params['delivery_date'] = $deliverydate;
+        }
+
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products', $params, self::METHOD_POST);
+    }
+
+    public function updatePurchaseorderProduct($idpurchaseorder, $idpurchaseorder_product, $params)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products/' . $idpurchaseorder_product, $params, self::METHOD_PUT);
+    }
+
+    public function removePurchaseorderProduct($idpurchaseorder, $idpurchaseorder_product)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products/' . $idpurchaseorder_product, [], self::METHOD_DELETE);
+    }
+
     public function getReceiptsFromPurchaseorder($idpurchaseorder)
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts');
@@ -545,6 +628,17 @@ class Client
         return $this->sendRequest('/returns/' . $idreturn, $params, self::METHOD_PUT);
     }
 
+    public function getReturnLogAndComments($idreturn)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/logs');
+    }
+
+    public function addReturnLogOrChangeStatus($idreturn, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/logs', $params, self::METHOD_POST);
+
+    }
+
     /*
      * Returned Products
      */
@@ -567,6 +661,11 @@ class Client
     public function removeReturnedProduct($idreturn, $idreturn_product)
     {
         return $this->sendRequest('/returns/' . $idreturn . '/returned_products/' . $idreturn_product, null,self::METHOD_DELETE);
+    }
+
+    public function receiveReturnedProducts($idreturn, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/receive', $params, self::METHOD_POST);
     }
 
     /*
@@ -668,6 +767,11 @@ class Client
     public function deleteBackorder($idbackorder)
     {
         return $this->sendRequest('/backorders/' . $idbackorder, null, self::METHOD_DELETE);
+    }
+
+    public function getBackordersForOrder($idorder)
+    {
+        return $this->sendRequest('/order/' . $idorder . '/backorders');
     }
 
     /*
