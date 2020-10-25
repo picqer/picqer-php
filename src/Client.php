@@ -379,12 +379,12 @@ class Client
         return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_PUT);
     }
 
-    public function allocateOrder($idorder)
+    public function allocateStockForOrder($idorder)
     {
         return $this->sendRequest('/orders/' . $idorder . '/allocate', null, self::METHOD_POST);
     }
 
-    public function deAllocateOrder($idorder)
+    public function deAllocateStockForOrder($idorder)
     {
         return $this->sendRequest('/orders/' . $idorder . '/deallocate', null, self::METHOD_POST);
     }
