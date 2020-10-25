@@ -511,6 +511,11 @@ class Client
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts', $params, self::METHOD_POST);
     }
 
+    public function updatePurchaseorder($idpurchaseorder, $params)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder, $params, self::METHOD_PUT);
+    }
+
     /*
      * Returns
      */
