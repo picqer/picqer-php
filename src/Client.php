@@ -1165,7 +1165,7 @@ class Client
                 continue;
             }
 
-            $parsedHeaders[$headerPieces[0]] = trim($headerPieces[1]);
+            $parsedHeaders[strtolower($headerPieces[0])] = trim($headerPieces[1]);
         }
 
         return $parsedHeaders;
