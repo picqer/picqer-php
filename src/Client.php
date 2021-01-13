@@ -1165,7 +1165,7 @@ class Client
                 continue;
             }
 
-            $parsedHeaders[$headerPieces[0]] = trim($headerPieces[1]);
+            $parsedHeaders[strtolower($headerPieces[0])] = trim($headerPieces[1]);
         }
 
         return $parsedHeaders;
@@ -1173,7 +1173,7 @@ class Client
 
     protected function getRemainingRateLimit(array $apiResultHeaders)
     {
-        return (array_key_exists('X-RateLimit-Remaining', $apiResultHeaders)) ? $apiResultHeaders['X-RateLimit-Remaining'] : null;
+        return (array_key_exists('x-ratelimit-remaining', $apiResultHeaders)) ? $apiResultHeaders['x-ratelimit-remaining'] : null;
     }
 
     protected function setPostData($curlSession, $method, $params)
