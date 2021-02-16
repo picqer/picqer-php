@@ -771,7 +771,7 @@ class Client
 
     public function getBackordersForOrder($idorder)
     {
-        return $this->sendRequest('/order/' . $idorder . '/backorders');
+        return $this->sendRequest('/orders/' . $idorder . '/backorders');
     }
 
     /*
