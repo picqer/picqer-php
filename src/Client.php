@@ -232,7 +232,7 @@ class Client
     public function updateProductPartAmount($idproduct, $idproductpart, $amount)
     {
         $params = ['amount' => $amount];
-        
+
         return $this->sendRequest('/products/' . $idproduct . '/parts/'.$idproductpart, $params, self::METHOD_PUT);
     }
 
@@ -497,7 +497,7 @@ class Client
     {
         return $this->sendRequest('/suppliers', null, null, $filters);
     }
-    
+
     public function getAllSuppliers($filters = [])
     {
         return $this->getAllResults('supplier', $filters);
@@ -699,7 +699,7 @@ class Client
     {
         return $this->sendRequest('/tags', [], self::METHOD_GET, $filters);
     }
-    
+
     public function getAllTags($filters = [])
     {
         return $this->getAllResults('tag', $filters);
@@ -763,7 +763,7 @@ class Client
     {
         return $this->sendRequest('/backorders/process', null, self::METHOD_POST);
     }
-    
+
     public function deleteBackorder($idbackorder)
     {
         return $this->sendRequest('/backorders/' . $idbackorder, null, self::METHOD_DELETE);
@@ -807,7 +807,7 @@ class Client
     {
         return $this->sendRequest('/shippingproviders');
     }
-    
+
     /*
      * Product fields
      */
@@ -820,7 +820,7 @@ class Client
     {
         return $this->sendRequest('/productfields/' . $idproductfield);
     }
-    
+
     /*
      * Order fields
      */
@@ -833,7 +833,7 @@ class Client
     {
         return $this->sendRequest('/orderfields/' . $idorderfield);
     }
-    
+
     /*
      * Customer fields
      */
@@ -953,7 +953,7 @@ class Client
 
         return ['success' => true, 'data' => $collection];
     }
-    
+
     /*
      * Yield all results from the API
      */
@@ -1051,6 +1051,7 @@ class Client
     public function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
         $endpoint = $this->getEndpoint($endpoint, $filters);
+
         $this->debug('URL: ' . $this->getUrl($endpoint));
 
         $curlSession = curl_init();
@@ -1073,6 +1074,7 @@ class Client
 
         $this->setPostData($curlSession, $method, $params);
         $this->setSslVerification($curlSession);
+        $this->resetRawResponseHeaders();
 
         $apiResult = curl_exec($curlSession);
         $headerInfo = curl_getinfo($curlSession);
@@ -1169,6 +1171,11 @@ class Client
         }
 
         return $parsedHeaders;
+    }
+
+    protected function resetRawResponseHeaders()
+    {
+        $this->rawResponseHeaders = [];
     }
 
     protected function getRemainingRateLimit(array $apiResultHeaders)
