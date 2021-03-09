@@ -1074,7 +1074,6 @@ class Client
 
         $this->setPostData($curlSession, $method, $params);
         $this->setSslVerification($curlSession);
-        $this->resetRawResponseHeaders();
 
         $apiResult = curl_exec($curlSession);
         $headerInfo = curl_getinfo($curlSession);
@@ -1083,6 +1082,7 @@ class Client
 
         $apiResultJson = json_decode($apiResult, true);
         $apiResultHeaders = $this->parseRawHeaders();
+        $this->resetRawHeaders();
 
         $result = [];
         $result['success'] = false;
@@ -1173,7 +1173,7 @@ class Client
         return $parsedHeaders;
     }
 
-    protected function resetRawResponseHeaders()
+    protected function resetRawHeaders()
     {
         $this->rawResponseHeaders = [];
     }
