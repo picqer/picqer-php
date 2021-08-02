@@ -490,6 +490,17 @@ class Client
         return $this->sendRequest('/picklists/' . $idpicklist . '/packinglistpdf');
     }
 
+	/*
+     * Picklist batches
+     */
+	public function getPicklistBatches($filters) {
+		return $this->sendRequest('/picklists/batches/', null, null, $filters);
+	}
+
+	public function getPicklistBatch($idpicklistbatch) {
+		return $this->sendRequest('/picklists/batches/'.$idpicklistbatch);
+	}
+
     /*
      * Suppliers
      */
