@@ -357,7 +357,7 @@ class Client
     }
 
     
-    public function createTag(string $title, string $color = '#823882', string $inherit = false)
+    public function createTag(string $title, string $color = '#823882', bool $inherit = false)
     {
         $params = [
             'title' => $title,
