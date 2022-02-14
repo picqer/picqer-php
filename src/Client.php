@@ -67,7 +67,7 @@ class Client
         if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         } else {
-            $result = null;
+            $result['data'] = null;
         }
         return $result;
     }
@@ -133,7 +133,7 @@ class Client
         if (is_array($result['data']) && count($result['data']) == 1) {
             $result['data'] = $result['data'][0];
         } else {
-            $result = null;
+            $result['data'] = null;
         }
 
         return $result;
