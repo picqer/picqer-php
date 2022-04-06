@@ -60,7 +60,7 @@ It is helpful for us if you set the user agent with the name of the application 
 This is the main method of the client that sends the API request. If there are new API endpoints that are not yet implemented in this client with dedicated methods, you can create the request yourself with sendRequest().
 
 ### getResultGenerator()
-This is a (generator)[http://php.net/manual/en/language.generators.syntax.php] for all listing methods like getOrders and getProducts. This will help reduce the memory usage of your application when looping through a lot of orders or products.
+This is a [generator](http://php.net/manual/en/language.generators.syntax.php) for all listing methods like getOrders and getProducts. This will help reduce the memory usage of your application when looping through a lot of orders or products.
 
 ### enableDebugmode()
 This flag gives you a lot of debug information about the request that the client send and the raw response it got as a result.
