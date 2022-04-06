@@ -356,6 +356,23 @@ class Client
         return $this->sendRequest('/orders/' . $idorder . '/tags');
     }
 
+    
+    public function createTag(string $title, string $color = '#823882', bool $inherit = false)
+    {
+        $params = [
+            'title' => $title,
+            'color' => $color,
+            'inherit' => $inherit
+        ];
+
+        return $this->sendRequest('/tags/', $params, self::METHOD_POST);
+    }
+    
+    public function deleteTag(string $idtag)
+    {
+        return $this->sendRequest('/tags/'.$idtag, [], self::METHOD_DELETE);
+    }
+    
     public function addOrderTag($idorder, $idtag)
     {
         $params = ['idtag' => $idtag];
