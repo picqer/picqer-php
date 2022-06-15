@@ -508,6 +508,14 @@ class Client
     }
 
     /*
+    * Batch picklists
+    */
+    public function getBatchPicklist($idPicklistBatch)
+    {
+        return $this->sendRequest('/picklists/batches/' . $idPicklistBatch);
+    }
+
+    /*
      * Suppliers
      */
     public function getSuppliers($filters = [])
