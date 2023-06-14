@@ -411,16 +411,6 @@ class Client
         return $this->sendRequest('/orders/' . $idorder . '/prioritise', null, self::METHOD_POST);
     }
 
-    public function getOrderFields($idorder)
-    {
-        return $this->sendRequest('/orders/' . $idorder . '/orderfields');
-    }
-
-    public function updateOrderField($idorder, $idorderfield, $value)
-    {
-        return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, ['value' => $value], self::METHOD_PUT);
-    }
-
     /*
      * Picklists
      */
@@ -872,6 +862,11 @@ class Client
     public function getOrderField($idorderfield)
     {
         return $this->sendRequest('/orderfields/' . $idorderfield);
+    }
+
+    public function updateOrderField($idorder, $idorderfield, $value)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, ['value' => $value], self::METHOD_PUT);
     }
 
     /*
