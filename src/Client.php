@@ -851,6 +851,11 @@ class Client
         return $this->sendRequest('/orderfields/' . $idorderfield);
     }
 
+    public function updateOrderField($idorder, $idorderfield, $value)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, ['value' => $value], self::METHOD_PUT);
+    }
+    
     /*
      * Customer fields
      */
