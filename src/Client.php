@@ -108,6 +108,21 @@ class Client
         return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, [], self::METHOD_DELETE);
     }
 
+    public function getCustomerTags($idcustomer)
+    {
+        return $this->sendRequest('/customers/' . $idcustomer . '/tags');
+    }
+
+    public function addCustomerTag($idcustomer, $idtag)
+    {
+        return $this->sendRequest('/customers/' . $idcustomer . '/tags', ['idtag' => $idtag], self::METHOD_POST);
+    }
+
+    public function deleteCustomerTag($idcustomer, $idtag)
+    {
+        return $this->sendRequest('/customers/' . $idcustomer . '/tags/' . $idtag, [], self::METHOD_DELETE);
+    }
+
     /*
      * Products
      */
@@ -668,6 +683,26 @@ class Client
     {
         return $this->sendRequest('/returns/' . $idreturn . '/logs', $params, self::METHOD_POST);
 
+    }
+    
+    public function getReturnStatuses()
+    {
+        return $this->sendRequest('/return_statuses');
+    }
+
+    public function getAllReturnStatuses($filters = [])
+    {
+        return $this->getAllResults('returnStatuse');
+    }
+
+    public function getReturnReasons()
+    {
+        return $this->sendRequest('/return_reasons');
+    }
+
+    public function getAllReturnReasons($filters = [])
+    {
+        return $this->getAllResults('returnReason');
     }
 
     /*
