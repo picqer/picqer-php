@@ -1020,8 +1020,9 @@ class Client
         return ['success' => true, 'data' => $collection];
     }
 
-    /*
+    /**
      * Yield all results from the API
+     * @throws Exception
      */
     public function getResultGenerator($entity, $filters = [])
     {
@@ -1051,8 +1052,6 @@ class Client
 
     /**
      * Creates a new company account for Picqer
-     * @param $params
-     * @return mixed
      * @throws RateLimitException
      */
     public function addCompany($params)
@@ -1063,7 +1062,7 @@ class Client
     /**
      * Enable debug mode gives verbose output on requests and responses
      */
-    public function enableDebugmode()
+    public function enableDebugmode(): void
     {
         $this->debug = true;
     }
@@ -1071,15 +1070,12 @@ class Client
     /**
      * Disable Curl's SSL verification for testing
      */
-    public function disableSslVerification()
+    public function disableSslVerification(): void
     {
         $this->skipSslVerification = true;
     }
 
-    /**
-     * @param string $apiHost
-     */
-    public function setApihost($apiHost)
+    public function setApihost(string $apiHost): void
     {
         $this->apiHost = $apiHost;
     }
@@ -1087,33 +1083,32 @@ class Client
     /**
      * @param string $protocol http or https
      */
-    public function setProtocol($protocol)
+    public function setProtocol(string $protocol): void
     {
         $this->protocol = $protocol;
     }
 
-    /**
-     * @param string $userAgent
-     */
-    public function setUseragent($userAgent)
+    public function setUseragent(string $userAgent): void
     {
         $this->userAgent = $userAgent;
     }
 
     /**
      * Change the timeout for CURL requests
-     * @param int $timeoutInSeconds
      */
-    public function setTimeoutInSeconds($timeoutInSeconds)
+    public function setTimeoutInSeconds(int $timeoutInSeconds): void
     {
         $this->timeoutInSeconds = $timeoutInSeconds;
     }
 
-    public function enableRetryOnRateLimitHit()
+    public function enableRetryOnRateLimitHit(): void
     {
         $this->waitOnRateLimit = true;
     }
 
+    /**
+     * @throws RateLimitException
+     */
     public function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
         $endpoint = $this->getEndpoint($endpoint, $filters);
@@ -1187,7 +1182,7 @@ class Client
         return $result;
     }
 
-    protected function getUrl($endpoint)
+    protected function getUrl(string $endpoint): string
     {
         return $this->protocol . '://' . $this->company . '.' . $this->apiHost . $this->apiLocation . '/' . $this->apiVersion . $endpoint;
     }
@@ -1197,7 +1192,7 @@ class Client
         return json_encode($params);
     }
 
-    protected function getEndpoint($endpoint, $filters)
+    protected function getEndpoint(string $endpoint, ?array $filters): string
     {
         if (! empty($filters)) {
             $i = 0;
@@ -1215,14 +1210,14 @@ class Client
         return $endpoint;
     }
 
-    protected function debug($message)
+    protected function debug($message): void
     {
         if ($this->debug) {
             echo 'Debug: ' . $message . PHP_EOL;
         }
     }
 
-    protected function parseRawHeaders()
+    protected function parseRawHeaders(): array
     {
         $parsedHeaders = [];
 
@@ -1239,7 +1234,7 @@ class Client
         return $parsedHeaders;
     }
 
-    protected function resetRawHeaders()
+    protected function resetRawHeaders(): void
     {
         $this->rawResponseHeaders = [];
     }
@@ -1249,7 +1244,7 @@ class Client
         return (array_key_exists('x-ratelimit-remaining', $apiResultHeaders)) ? $apiResultHeaders['x-ratelimit-remaining'] : null;
     }
 
-    protected function setPostData($curlSession, $method, $params)
+    protected function setPostData($curlSession, $method, $params): void
     {
         if (! in_array($method, [self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE])) {
             return;
@@ -1262,7 +1257,7 @@ class Client
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $data);
     }
 
-    protected function setSslVerification($curlSession)
+    protected function setSslVerification($curlSession): void
     {
         if ($this->skipSslVerification) {
             curl_setopt($curlSession, CURLOPT_SSL_VERIFYPEER, false);
@@ -1270,6 +1265,9 @@ class Client
         }
     }
 
+    /**
+     * @throws RateLimitException
+     */
     protected function handleRateLimitReached($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
         if (! $this->waitOnRateLimit) {
