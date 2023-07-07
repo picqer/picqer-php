@@ -355,7 +355,6 @@ class Client
     {
         return $this->sendRequest('/orders/' . $idorder . '/tags');
     }
-
     
     public function createTag(string $title, string $color = '#823882', bool $inherit = false)
     {
@@ -394,6 +393,21 @@ class Client
     public function updateOrder($idorder, $params)
     {
         return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_PUT);
+    }
+
+    public function getOrderFieldsOnOrder($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/orderfields');
+    }
+
+    public function updateOrderFieldOnOrder($idorder, $idorderfield, $value)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, ['value' => $value], self::METHOD_PUT);
+    }
+
+    public function deleteOrderFieldFromOrder($idorder, $idorderfield)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, [], self::METHOD_DELETE);
     }
 
     public function allocateStockForOrder($idorder)
