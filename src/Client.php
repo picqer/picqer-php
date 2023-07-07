@@ -29,6 +29,12 @@ class Client
     protected $waitOnRateLimit = false;
     protected $sleepTimeOnRateLimitHitInSeconds = 20;
 
+    protected $entityBaseMethodNameMap = [
+        'product' => 'getProducts',
+        'picklistBatch' => 'getPicklistBatches',
+        'returnStatus' => 'getReturnStatuses',
+    ];
+
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
     const METHOD_PUT = 'PUT';
@@ -537,6 +543,24 @@ class Client
     }
 
     /*
+     * Picklist batches
+     */
+    public function getPicklistBatches($filters = [])
+    {
+        return $this->sendRequest('/picklists/batches', null, null, $filters);
+    }
+
+    public function getAllPicklistBatches($filters = [])
+    {
+        return $this->getAllResults('picklistBatch', $filters);
+    }
+
+    public function getPicklistBatch($idpicklist_batch)
+    {
+        return $this->sendRequest('/picklists/batches/' . $idpicklist_batch);
+    }
+
+    /*
      * Suppliers
      */
     public function getSuppliers($filters = [])
@@ -998,12 +1022,12 @@ class Client
         $gotAll = false;
         $collection = [];
 
-        $functionname = 'get' . ucfirst($entity) . 's';
+        $methodName = $this->getEntityGetterMethodName($entity);
 
         $i = 0;
         while ($gotAll == false) {
             $filters['offset'] = ($i * 100);
-            $result = $this->$functionname($filters);
+            $result = $this->$methodName($filters);
             if (isset($result['success']) && $result['success'] && isset($result['data'])) {
                 if (count($result['data']) < 100) {
                     $gotAll = true;
@@ -1024,9 +1048,9 @@ class Client
      * Yield all results from the API
      * @throws Exception
      */
-    public function getResultGenerator($entity, $filters = [])
+    public function getResultGenerator(string $entity, $filters = [])
     {
-        $methodName = 'get' . ucfirst($entity) . 's';
+        $methodName = $this->getEntityGetterMethodName($entity);
 
         $i = 0;
         $gotAll = false;
@@ -1279,5 +1303,14 @@ class Client
         sleep($this->sleepTimeOnRateLimitHitInSeconds);
 
         return $this->sendRequest($endpoint, $params, $method, $filters);
+    }
+
+    private function getEntityGetterMethodName(string $entity): string
+    {
+        if (array_key_exists($entity, $this->entityBaseMethodNameMap)) {
+            return $this->entityBaseMethodNameMap[$entity];
+        }
+
+        return 'get' . ucfirst($entity) . 's';
     }
 }
