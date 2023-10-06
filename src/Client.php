@@ -2,34 +2,28 @@
 
 namespace Picqer\Api;
 
-/**
- * Picqer PHP API Client
- *
- * @author Casper Bakker <info@picqer.com>
- * @license http://creativecommons.org/licenses/MIT/ MIT
- */
 class Client
 {
-    protected $company;
-    protected $apiKey;
-    protected $password;
+    protected string $company;
+    protected string $apiKey;
+    protected string $password;
 
-    protected $protocol = 'https';
-    protected $apiHost = 'picqer.com';
-    protected $apiLocation = '/api';
-    protected $apiVersion = 'v1';
-    protected $userAgent = 'Picqer PHP API Client (picqer.com)';
+    protected string $protocol = 'https';
+    protected string $apiHost = 'picqer.com';
+    protected string $apiLocation = '/api';
+    protected string $apiVersion = 'v1';
+    protected string $userAgent = 'Picqer PHP API Client (picqer.com)';
 
-    protected $clientVersion = '0.23.0';
+    protected string $clientVersion = '0.23.0';
 
-    protected $debug = false;
-    protected $skipSslVerification = false;
+    protected bool $debug = false;
+    protected bool $skipSslVerification = false;
 
-    protected $timeoutInSeconds = 60;
-    protected $waitOnRateLimit = false;
-    protected $sleepTimeOnRateLimitHitInSeconds = 20;
+    protected int $timeoutInSeconds = 60;
+    protected bool $waitOnRateLimit = false;
+    protected int $sleepTimeOnRateLimitHitInSeconds = 20;
 
-    protected $entityBaseMethodNameMap = [
+    protected array $entityBaseMethodNameMap = [
         'product' => 'getProducts',
         'picklistBatch' => 'getPicklistBatches',
         'returnStatus' => 'getReturnStatuses',
@@ -40,7 +34,7 @@ class Client
     const METHOD_PUT = 'PUT';
     const METHOD_DELETE = 'DELETE';
 
-    protected $rawResponseHeaders;
+    protected array $rawResponseHeaders = [];
 
     public function __construct($company, $apikey = '', $password = 'X')
     {
@@ -1185,16 +1179,14 @@ class Client
         curl_close($curlSession);
 
         if ($headerInfo['http_code'] == '429') {
-            $result = $this->handleRateLimitReached($endpoint, $params, $method, $filters);
+            return $this->handleRateLimitReached($endpoint, $params, $method, $filters);
         }
 
         // API returns error
         if (! in_array($headerInfo['http_code'], ['200', '201', '204'])) {
             $result['error'] = true;
             $result['errorcode'] = $headerInfo['http_code'];
-            if (isset($apiResult)) {
-                $result['errormessage'] = $apiResult;
-            }
+            $result['errormessage'] = $apiResult;
 
             return $result;
         }
