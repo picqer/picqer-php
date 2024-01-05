@@ -1106,6 +1106,11 @@ class Client
         return $this->sendRequest('/comments/' . $idcomment, [], self::METHOD_GET);
     }
 
+    public function deleteComment($idcomment)
+    {
+        return $this->sendRequest('/comments/' . $idcomment, [], self::METHOD_DELETE);
+    }
+
     /*
      * General
      */
