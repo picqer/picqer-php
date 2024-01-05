@@ -123,6 +123,16 @@ class Client
         return $this->sendRequest('/customers/' . $idcustomer . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
+    public function addCustomerComment($idcustomer, $params)
+    {
+        return $this->sendRequest('/customers/' . $idcustomer . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getCustomerComments($idcustomer)
+    {
+        return $this->sendRequest('/customers/' . $idcustomer . '/comments');
+    }
+
     /*
      * Products
      */
@@ -273,6 +283,16 @@ class Client
         return $this->sendRequest('/products/' . $idproduct . '/locations/' . $idlocation, array(), self::METHOD_DELETE);
     }
 
+    public function addProductComment($idproduct, $params)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getProductComments($idproduct)
+    {
+        return $this->sendRequest('/products/' . $idproduct . '/comments');
+    }
+
     /*
      * Stock history
      */
@@ -364,6 +384,16 @@ class Client
     public function addOrderNote($idorder, $note)
     {
         return $this->sendRequest('/orders/' . $idorder . '/notes', ['note' => $note], self::METHOD_POST);
+    }
+
+    public function addOrderComment($idorder, $params)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getOrderComments($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/comments');
     }
 
     public function getOrderTags($idorder)
@@ -536,6 +566,16 @@ class Client
         return $this->sendRequest('/picklists/' . $idpicklist . '/packinglistpdf');
     }
 
+    public function addPicklistComment($idpicklist, $params)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getPicklistComments($idpicklist)
+    {
+        return $this->sendRequest('/picklists/' . $idpicklist . '/comments');
+    }
+
     /*
      * Picklist batches
      */
@@ -580,6 +620,16 @@ class Client
     public function updateSupplier($idsupplier, $params)
     {
         return $this->sendRequest('/suppliers/' . $idsupplier, $params, self::METHOD_PUT);
+    }
+
+    public function addSupplierComment($idsupplier, $params)
+    {
+        return $this->sendRequest('/suppliers/' . $idsupplier . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getSupplierComments($idsupplier)
+    {
+        return $this->sendRequest('/suppliers/' . $idsupplier . '/comments');
     }
 
     /*
@@ -663,6 +713,30 @@ class Client
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder, $params, self::METHOD_PUT);
     }
 
+    public function addPurchaseorderComment($idpurchaseorder, $params)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getPurchaseorderComments($idpurchaseorder)
+    {
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/comments');
+    }
+
+    /**
+     * New receipt endpoints have not added yet, so added it below purchase orders for now
+     */
+
+    public function addReceiptComment($idreceipt, $params)
+    {
+        return $this->sendRequest('/receipts/' . $idreceipt . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getReceiptComments($idreceipt)
+    {
+        return $this->sendRequest('/receipts/' . $idreceipt . '/comments');
+    }
+
     /*
      * Returns
      */
@@ -721,6 +795,16 @@ class Client
     public function getAllReturnReasons($filters = [])
     {
         return $this->getAllResults('returnReason');
+    }
+
+    public function addReturnComment($idreturn, $params)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/comments', $params, self::METHOD_POST);
+    }
+
+    public function getReturnComments($idreturn)
+    {
+        return $this->sendRequest('/returns/' . $idreturn . '/comments');
     }
 
     /*
