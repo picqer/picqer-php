@@ -1093,6 +1093,20 @@ class Client
     }
 
     /*
+    * Comments
+    */
+
+    public function getComments($filters = [])
+    {
+        return $this->sendRequest('/comments', [], self::METHOD_GET, $filters);
+    }
+    
+    public function getComment($idcomment)
+    {
+        return $this->sendRequest('/comments/' . $idcomment, [], self::METHOD_GET);
+    }
+
+    /*
      * General
      */
     public function getAllResults($entity, $filters = [])
