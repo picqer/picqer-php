@@ -123,6 +123,34 @@ class Client
         return $this->sendRequest('/customers/' . $idcustomer . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
+    /**
+     * Fulfilment customers
+     */
+    public function getFulfilmentCustomers($filters = [])
+    {
+        return $this->sendRequest('/fulfilment/customers', null, null, $filters);
+    }
+
+    public function getAllFulfilmentCustomers($filters = [])
+    {
+        return $this->getAllResults('fulfilmentCustomer', $filters);
+    }
+
+    public function getFulfilmentCustomer($idfulfilmentcustomer)
+    {
+        return $this->sendRequest('/fulfilment/customers/' . $idfulfilmentcustomer);
+    }
+
+    public function addFulfilmentCustomer($params)
+    {
+        return $this->sendRequest('/fulfilment/customers', $params, self::METHOD_POST);
+    }
+
+    public function updateFulfilmentCustomer($idfulfilmentcustomer, $params)
+    {
+        return $this->sendRequest('/fulfilment/customers/' . $idfulfilmentcustomer, $params, self::METHOD_PUT);
+    }
+
     /*
      * Products
      */
