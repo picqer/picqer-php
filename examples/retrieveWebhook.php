@@ -5,4 +5,4 @@ require('../src/PicqerWebhook.php');
 $webhook = Picqer\Api\PicqerWebhook::retrieve();
 
 echo 'Hook received: ' . $webhook->getName() . ' that was triggered at ' . $webhook->getEventTriggeredAt() . PHP_EOL;
-echo $webhook->getData();
+echo var_dump($webhook->getData());
