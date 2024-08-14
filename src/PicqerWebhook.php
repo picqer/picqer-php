@@ -15,6 +15,7 @@ class PicqerWebhook
     protected $event;
     protected $data;
     protected $event_triggered_at;
+    protected $rawPayload;
 
     public function __construct($webhookPayload)
     {
