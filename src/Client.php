@@ -1018,9 +1018,9 @@ class Client
         return $this->sendRequest('/locations/' . $id, [], self::METHOD_DELETE);
     }
 
-    public function getProductsOnLocation($id)
+    public function getProductsOnLocation($id, $filters = [])
     {
-        return $this->sendRequest('/locations/' . $id . '/products', [], self::METHOD_GET);
+        return $this->sendRequest('/locations/' . $id . '/products', [], self::METHOD_GET, $filters);
     }
 
     /*
