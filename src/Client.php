@@ -1023,6 +1023,11 @@ class Client
         return $this->sendRequest('/locations/' . $id . '/products', [], self::METHOD_GET);
     }
 
+    public function getAllProductsOnLocation($id)
+    {
+        return $this->getAllResults('/locations/' . $id . '/products');
+    }
+
     /*
      * Stats
      */
@@ -1039,17 +1044,31 @@ class Client
     /*
      * General
      */
-    public function getAllResults($entity, $filters = [])
+    public function getAllResults(string $entity, array $filters = []): array
     {
         $gotAll = false;
         $collection = [];
 
-        $methodName = $this->getEntityGetterMethodName($entity);
+        if (str_starts_with($entity, '/')) {
+            // If '/products' is the entity, use that endpoint directly
+            $mode = 'byEndpoint';
+            $baseEndpoint = $entity;
+        } else {
+            // If 'product' is the entity, use the getProducts() method
+            $mode = 'byMethod';
+            $methodName = $this->getEntityGetterMethodName($entity);
+        }
 
         $i = 0;
         while ($gotAll == false) {
             $filters['offset'] = ($i * 100);
-            $result = $this->$methodName($filters);
+
+            if ($mode === 'byEndpoint') {
+                $result = $this->sendRequest($baseEndpoint, null, null, $filters);
+            } else {
+                $result = $this->$methodName($filters);
+            }
+
             if (isset($result['success']) && $result['success'] && isset($result['data'])) {
                 if (count($result['data']) < 100) {
                     $gotAll = true;
