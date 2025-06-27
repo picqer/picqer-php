@@ -44,6 +44,19 @@ class Client
     }
 
     /*
+     * Movements
+     */
+    public function getMovements($filters = [])
+    {
+        return $this->sendRequest('/movements', [], self::METHOD_GET, $filters);
+    }
+    
+    public function getMovement($idmovement)
+    {
+        return $this->sendRequest('/movements/' . $idmovement);
+    }
+    
+    /*
      * Customers
      */
     public function getCustomers($filters = [])
