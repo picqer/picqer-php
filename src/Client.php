@@ -144,7 +144,7 @@ class Client
     public function getCustomerComments($idcustomer)
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/comments');
-
+    }
 
     /**
      * Fulfilment customers
