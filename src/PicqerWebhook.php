@@ -10,13 +10,14 @@ namespace Picqer\Api;
  */
 class PicqerWebhook
 {
-    protected $idhook;
-    protected $name;
-    protected $event;
-    protected $data;
-    protected $event_triggered_at;
+    protected int $idhook;
+    protected string $name;
+    protected string $event;
+    protected array $data;
+    protected string $event_triggered_at;
+    protected array $rawPayload;
 
-    public function __construct($webhookPayload)
+    public function __construct(array $webhookPayload)
     {
         $this->rawPayload = $webhookPayload;
         
@@ -29,7 +30,7 @@ class PicqerWebhook
         }
     }
     
-    public static function retrieve()
+    public static function retrieve(): PicqerWebhook
     {
         $webhookPayloadRaw = file_get_contents('php://input');
         
@@ -42,7 +43,7 @@ class PicqerWebhook
         return new self($webhookPayloadDecoded);
     }
     
-    public static function retrieveWithSecret($secret)
+    public static function retrieveWithSecret($secret): PicqerWebhook
     {
         if (! isset($_SERVER) || ! array_key_exists('HTTP_X_PICQER_SIGNATURE', $_SERVER)) {
             throw new WebhookSignatureMismatchException('Could not find signature header in webhook');
@@ -57,31 +58,33 @@ class PicqerWebhook
         if (! hash_equals($calculatedSignature, $signatureHeader)) {
             throw new WebhookSignatureMismatchException('Signatures do not match');
         }
-        
-        return self::retrieve();
+
+        $webhookPayloadDecoded = json_decode($webhookPayloadRaw, true);
+
+        return new self($webhookPayloadDecoded);
     }
 
-    public function getIdhook()
+    public function getIdhook(): int
     {
         return $this->idhook;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getEvent()
+    public function getEvent(): string
     {
         return $this->event;
     }
 
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    public function getEventTriggeredAt()
+    public function getEventTriggeredAt(): string
     {
         return $this->event_triggered_at;
     }

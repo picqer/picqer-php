@@ -44,6 +44,19 @@ class Client
     }
 
     /*
+     * Movements
+     */
+    public function getMovements($filters = [])
+    {
+        return $this->sendRequest('/movements', [], self::METHOD_GET, $filters);
+    }
+    
+    public function getMovement($idmovement)
+    {
+        return $this->sendRequest('/movements/' . $idmovement);
+    }
+    
+    /*
      * Customers
      */
     public function getCustomers($filters = [])
@@ -131,6 +144,34 @@ class Client
     public function getCustomerComments($idcustomer)
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/comments');
+
+
+    /**
+     * Fulfilment customers
+     */
+    public function getFulfilmentCustomers($filters = [])
+    {
+        return $this->sendRequest('/fulfilment/customers', null, null, $filters);
+    }
+
+    public function getAllFulfilmentCustomers($filters = [])
+    {
+        return $this->getAllResults('fulfilmentCustomer', $filters);
+    }
+
+    public function getFulfilmentCustomer($idfulfilmentcustomer)
+    {
+        return $this->sendRequest('/fulfilment/customers/' . $idfulfilmentcustomer);
+    }
+
+    public function addFulfilmentCustomer($params)
+    {
+        return $this->sendRequest('/fulfilment/customers', $params, self::METHOD_POST);
+    }
+
+    public function updateFulfilmentCustomer($idfulfilmentcustomer, $params)
+    {
+        return $this->sendRequest('/fulfilment/customers/' . $idfulfilmentcustomer, $params, self::METHOD_PUT);
     }
 
     /*
@@ -376,6 +417,11 @@ class Client
         return $this->sendRequest('/orders/' . $idorder . '/process', null, self::METHOD_POST);
     }
 
+    public function processOrderBackorders($idorder)
+    {
+        return $this->sendRequest('/orders/' . $idorder . '/process-backorders', null, self::METHOD_POST);
+    }
+    
     public function getOrderNotes($idorder)
     {
         return $this->sendRequest('/orders/' . $idorder . '/notes');
@@ -1079,6 +1125,11 @@ class Client
         return $this->sendRequest('/locations/' . $id . '/products', [], self::METHOD_GET);
     }
 
+    public function getAllProductsOnLocation($id)
+    {
+        return $this->getAllResults('/locations/' . $id . '/products');
+    }
+
     /*
      * Stats
      */
@@ -1114,17 +1165,31 @@ class Client
     /*
      * General
      */
-    public function getAllResults($entity, $filters = [])
+    public function getAllResults(string $entity, array $filters = []): array
     {
         $gotAll = false;
         $collection = [];
 
-        $methodName = $this->getEntityGetterMethodName($entity);
+        if (str_starts_with($entity, '/')) {
+            // If '/products' is the entity, use that endpoint directly
+            $mode = 'byEndpoint';
+            $baseEndpoint = $entity;
+        } else {
+            // If 'product' is the entity, use the getProducts() method
+            $mode = 'byMethod';
+            $methodName = $this->getEntityGetterMethodName($entity);
+        }
 
         $i = 0;
         while ($gotAll == false) {
             $filters['offset'] = ($i * 100);
-            $result = $this->$methodName($filters);
+
+            if ($mode === 'byEndpoint') {
+                $result = $this->sendRequest($baseEndpoint, null, null, $filters);
+            } else {
+                $result = $this->$methodName($filters);
+            }
+
             if (isset($result['success']) && $result['success'] && isset($result['data'])) {
                 if (count($result['data']) < 100) {
                     $gotAll = true;
