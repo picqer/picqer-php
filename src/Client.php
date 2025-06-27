@@ -1297,16 +1297,16 @@ class Client
      */
     public function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
     {
-        $endpoint = $this->getEndpoint($endpoint, $filters);
+        $url = $this->getUrl($endpoint, $filters);
 
-        $this->debug('URL: ' . $this->getUrl($endpoint));
+        $this->debug('URL: ' . $url);
 
         $curlSession = curl_init();
 
         curl_setopt($curlSession, CURLOPT_HEADER, false);
         curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
 
-        curl_setopt($curlSession, CURLOPT_URL, $this->getUrl($endpoint));
+        curl_setopt($curlSession, CURLOPT_URL, $url);
         curl_setopt($curlSession, CURLOPT_TIMEOUT, $this->timeoutInSeconds);
 
         curl_setopt($curlSession, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -1366,32 +1366,29 @@ class Client
         return $result;
     }
 
-    protected function getUrl(string $endpoint): string
+    protected function getUrl(string $endpoint, ?array $filters): string
     {
-        return $this->protocol . '://' . $this->company . '.' . $this->apiHost . $this->apiLocation . '/' . $this->apiVersion . $endpoint;
-    }
+        $result = $this->protocol . '://' . $this->company . '.' . $this->apiHost . $this->apiLocation . '/' . $this->apiVersion . $endpoint;
 
-    protected function prepareData($params)
-    {
-        return json_encode($params);
-    }
-
-    protected function getEndpoint(string $endpoint, ?array $filters): string
-    {
         if (! empty($filters)) {
             $i = 0;
             foreach ($filters as $key => $value) {
                 if ($i == 0) {
-                    $endpoint .= '?';
+                    $result .= '?';
                 } else {
-                    $endpoint .= '&';
+                    $result .= '&';
                 }
-                $endpoint .= $key . '=' . urlencode($value);
+                $result .= $key . '=' . urlencode($value);
                 $i++;
             }
         }
 
-        return $endpoint;
+        return $result;
+    }
+
+    protected function prepareData($params): bool|string
+    {
+        return json_encode($params);
     }
 
     protected function debug($message): void
