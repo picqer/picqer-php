@@ -384,7 +384,7 @@ class Client
         return $this->sendRequest('/orders/' . $idorder . '/process', null, self::METHOD_POST);
     }
 
-    public function processOrderBackOrders($idorder)
+    public function processOrderBackorders($idorder)
     {
         return $this->sendRequest('/orders/' . $idorder . '/process-backorders', null, self::METHOD_POST);
     }
