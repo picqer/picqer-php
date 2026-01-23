@@ -769,10 +769,26 @@ class Client
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/comments');
     }
 
-    /**
-     * New receipt endpoints have not added yet, so added it below purchase orders for now
-     */
+    public function getReceipt($idreceipt)
+    {
+        return $this->sendRequest('/receipts/' . $idreceipt);
+    }
 
+    public function getReceipts($filters = [])
+    {
+        return $this->sendRequest('/receipts', null, null, $filters);
+    }
+
+    public function getAllReceipts($filters = [])
+    {
+        return $this->getAllResults('receipt', $filters);
+    }
+
+    public function deleteReceipt($idreceipt)
+    {
+        return $this->sendRequest('/receipts/' . $idreceipt, [], self::METHOD_DELETE);
+    }
+    
     public function addReceiptComment($idreceipt, $params)
     {
         return $this->sendRequest('/receipts/' . $idreceipt . '/comments', $params, self::METHOD_POST);
@@ -971,6 +987,11 @@ class Client
     public function getBackorder($idbackorder)
     {
         return $this->sendRequest('/backorders/' . $idbackorder);
+    }
+
+    public function getAllBackorders($filters = [])
+    {
+        return $this->getAllResults('backorder', $filters);
     }
 
     public function processBackorders()
