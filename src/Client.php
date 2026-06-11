@@ -2,6 +2,8 @@
 
 namespace Picqer\Api;
 
+use CurlHandle;
+
 class Client
 {
     protected string $company;
@@ -29,14 +31,14 @@ class Client
         'returnStatus' => 'getReturnStatuses',
     ];
 
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
-    const METHOD_PUT = 'PUT';
-    const METHOD_DELETE = 'DELETE';
+    const string METHOD_GET = 'GET';
+    const string METHOD_POST = 'POST';
+    const string METHOD_PUT = 'PUT';
+    const string METHOD_DELETE = 'DELETE';
 
     protected array $rawResponseHeaders = [];
 
-    public function __construct($company, $apikey = '', $password = 'X')
+    public function __construct(string $company, string $apikey = '', string $password = 'X')
     {
         $this->company = $company;
         $this->apiKey = $apikey;
@@ -46,35 +48,35 @@ class Client
     /*
      * Movements
      */
-    public function getMovements($filters = [])
+    public function getMovements(array $filters = []): array
     {
         return $this->sendRequest('/movements', [], self::METHOD_GET, $filters);
     }
-    
-    public function getMovement($idmovement)
+
+    public function getMovement(int $idmovement): array
     {
         return $this->sendRequest('/movements/' . $idmovement);
     }
-    
+
     /*
      * Customers
      */
-    public function getCustomers($filters = [])
+    public function getCustomers(array $filters = []): array
     {
-        return $this->sendRequest('/customers', null, null, $filters);
+        return $this->sendRequest('/customers', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllCustomers($filters = [])
+    public function getAllCustomers(array $filters = []): array
     {
         return $this->getAllResults('customer', $filters);
     }
 
-    public function getCustomer($idcustomer)
+    public function getCustomer(int $idcustomer): array
     {
         return $this->sendRequest('/customers/' . $idcustomer);
     }
 
-    public function getCustomerByCustomerid($customerid)
+    public function getCustomerByCustomerid(int $customerid): array
     {
         $result = $this->sendRequest('/customers?customerid=' . urlencode($customerid));
         if (is_array($result['data']) && count($result['data']) == 1) {
@@ -85,63 +87,63 @@ class Client
         return $result;
     }
 
-    public function addCustomer($params)
+    public function addCustomer(array $params): array
     {
         return $this->sendRequest('/customers', $params, self::METHOD_POST);
     }
 
     /** @deprecated Use the `update`, stays here for backwards compatibility */
-    public function editCustomer($idcustomer, $params)
+    public function editCustomer(int $idcustomer, array $params): void
     {
         $this->updateCustomer($idcustomer, $params);
     }
 
-    public function updateCustomer($idcustomer, $params)
+    public function updateCustomer(int $idcustomer, array $params): array
     {
         return $this->sendRequest('/customers/' . $idcustomer, $params, self::METHOD_PUT);
     }
 
-    public function getCustomerAddress($idcustomer)
+    public function getCustomerAddress(int $idcustomer): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/addresses');
     }
 
-    public function addCustomerAddress($idcustomer, $params)
+    public function addCustomerAddress(int $idcustomer, array $params): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/addresses', $params, self::METHOD_POST);
     }
 
-    public function updateCustomerAddress($idcustomer, $idaddress, $params)
+    public function updateCustomerAddress(int $idcustomer, int $idaddress, array $params): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, $params, self::METHOD_PUT);
     }
 
-    public function deleteCustomerAddress($idcustomer, $idaddress)
+    public function deleteCustomerAddress(int $idcustomer, int $idaddress): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/addresses/' . $idaddress, [], self::METHOD_DELETE);
     }
 
-    public function getCustomerTags($idcustomer)
+    public function getCustomerTags(int $idcustomer): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/tags');
     }
 
-    public function addCustomerTag($idcustomer, $idtag)
+    public function addCustomerTag(int $idcustomer, int $idtag): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/tags', ['idtag' => $idtag], self::METHOD_POST);
     }
 
-    public function deleteCustomerTag($idcustomer, $idtag)
+    public function deleteCustomerTag(int $idcustomer, int $idtag): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
-    public function addCustomerComment($idcustomer, $params)
+    public function addCustomerComment(int $idcustomer, array $params): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getCustomerComments($idcustomer)
+    public function getCustomerComments(int $idcustomer): array
     {
         return $this->sendRequest('/customers/' . $idcustomer . '/comments');
     }
@@ -149,27 +151,27 @@ class Client
     /**
      * Fulfilment customers
      */
-    public function getFulfilmentCustomers($filters = [])
+    public function getFulfilmentCustomers(array $filters = []): array
     {
-        return $this->sendRequest('/fulfilment/customers', null, null, $filters);
+        return $this->sendRequest('/fulfilment/customers', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllFulfilmentCustomers($filters = [])
+    public function getAllFulfilmentCustomers(array $filters = []): array
     {
         return $this->getAllResults('fulfilmentCustomer', $filters);
     }
 
-    public function getFulfilmentCustomer($idfulfilmentcustomer)
+    public function getFulfilmentCustomer(int $idfulfilmentcustomer): array
     {
         return $this->sendRequest('/fulfilment/customers/' . $idfulfilmentcustomer);
     }
 
-    public function addFulfilmentCustomer($params)
+    public function addFulfilmentCustomer(array $params): array
     {
         return $this->sendRequest('/fulfilment/customers', $params, self::METHOD_POST);
     }
 
-    public function updateFulfilmentCustomer($idfulfilmentcustomer, $params)
+    public function updateFulfilmentCustomer(int $idfulfilmentcustomer, array $params): array
     {
         return $this->sendRequest('/fulfilment/customers/' . $idfulfilmentcustomer, $params, self::METHOD_PUT);
     }
@@ -177,22 +179,22 @@ class Client
     /*
      * Products
      */
-    public function getProducts($filters = [])
+    public function getProducts(array $filters = []): array
     {
-        return $this->sendRequest('/products', null, null, $filters);
+        return $this->sendRequest('/products', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllProducts($filters = [])
+    public function getAllProducts(array $filters = []): array
     {
         return $this->getAllResults('product', $filters);
     }
 
-    public function getProduct($idproduct)
+    public function getProduct(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct);
     }
 
-    public function getProductByProductcode($productcode)
+    public function getProductByProductcode(string $productcode): array
     {
         $result = $this->sendRequest('/products?productcode=' . urlencode($productcode));
 
@@ -205,131 +207,131 @@ class Client
         return $result;
     }
 
-    public function addProduct($params)
+    public function addProduct(array $params): array
     {
         return $this->sendRequest('/products', $params, self::METHOD_POST);
     }
 
-    public function inactivateProduct($idproduct)
+    public function inactivateProduct(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/inactivate', [], self::METHOD_POST);
     }
 
-    public function activateProduct($idproduct)
+    public function activateProduct(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/activate', [], self::METHOD_POST);
     }
 
-    public function getProductStock($idproduct)
+    public function getProductStock(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/stock');
     }
 
-    public function getProductStockForWarehouse($idproduct, $idwarehouse)
+    public function getProductStockForWarehouse(int $idproduct, int $idwarehouse): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse);
     }
 
-    public function updateProductStockForWarehouse($idproduct, $idwarehouse, $params)
+    public function updateProductStockForWarehouse(int $idproduct, int $idwarehouse, array $params): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/stock/' . $idwarehouse, $params, self::METHOD_POST);
     }
 
-    public function getProductWarehouseSettings($idproduct)
+    public function getProductWarehouseSettings(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/warehouses');
     }
 
-    public function updateProductWarehouseSetting($idproduct, $idwarehouse, $params)
+    public function updateProductWarehouseSetting(int $idproduct, int $idwarehouse, array $params): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/warehouses/' . $idwarehouse, $params, self::METHOD_PUT);
     }
 
-    public function getProductImages($idproduct)
+    public function getProductImages(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/images');
     }
 
-    public function addImageToProduct($idproduct, $base64Image)
+    public function addImageToProduct(int $idproduct, string $base64Image): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/images', ['image' => $base64Image], self::METHOD_POST);
     }
 
-    public function deleteImageFromProduct($idproduct, $idproduct_image)
+    public function deleteImageFromProduct(int $idproduct, int $idproduct_image): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/images/' . $idproduct_image, [], self::METHOD_DELETE);
     }
 
-    public function updateProduct($idproduct, $params)
+    public function updateProduct(int $idproduct, array $params): array
     {
         return $this->sendRequest('/products/' . $idproduct, $params, self::METHOD_PUT);
     }
 
-    public function getProductTags($idproduct)
+    public function getProductTags(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/tags');
     }
 
-    public function addProductTag($idproduct, $idtag)
+    public function addProductTag(int $idproduct, int $idtag): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/tags', ['idtag' => $idtag], self::METHOD_POST);
     }
 
-    public function deleteProductTag($idproduct, $idtag)
+    public function deleteProductTag(int $idproduct, int $idtag): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
-    public function getProductParts($idproduct)
+    public function getProductParts(int $idproduct): array
     {
         return $this->sendRequest('/products/'.$idproduct.'/parts');
     }
 
-    public function getProductPart($idproduct, $idproduct_part)
+    public function getProductPart(int $idproduct, int $idproduct_part): array
     {
         return $this->sendRequest('/products/'.$idproduct.'/parts/'.$idproduct_part);
     }
 
-    public function addProductPart($idproduct, $params)
+    public function addProductPart(int $idproduct, array $params): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/parts', $params, self::METHOD_POST);
     }
 
-    public function updateProductPartAmount($idproduct, $idproductpart, $amount)
+    public function updateProductPartAmount(int $idproduct, int $idproductpart, int $amount): array
     {
         $params = ['amount' => $amount];
 
         return $this->sendRequest('/products/' . $idproduct . '/parts/'.$idproductpart, $params, self::METHOD_PUT);
     }
 
-    public function deleteProductPart($idproduct, $idproductpart)
+    public function deleteProductPart(int $idproduct, int $idproductpart): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/parts/' . $idproductpart, [], self::METHOD_DELETE);
     }
 
-    public function getProductLocations($idproduct)
+    public function getProductLocations(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/locations');
     }
 
-    public function linkProductToLocation($idproduct, $idlocation)
+    public function linkProductToLocation(int $idproduct, int $idlocation): array
     {
         $params = array('idlocation' => $idlocation);
 
         return $this->sendRequest('/products/' . $idproduct . '/locations', $params, self::METHOD_POST);
     }
 
-    public function unlinkProductFromLocation($idproduct, $idlocation)
+    public function unlinkProductFromLocation(int $idproduct, int $idlocation): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/locations/' . $idlocation, array(), self::METHOD_DELETE);
     }
 
-    public function addProductComment($idproduct, $params)
+    public function addProductComment(int $idproduct, array $params): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getProductComments($idproduct)
+    public function getProductComments(int $idproduct): array
     {
         return $this->sendRequest('/products/' . $idproduct . '/comments');
     }
@@ -337,22 +339,22 @@ class Client
     /*
      * Stock history
      */
-    public function getStockHistories($filters = [])
+    public function getStockHistories(array $filters = []): array
     {
-        return $this->sendRequest('/stockhistory', null, null, $filters);
+        return $this->sendRequest('/stockhistory', [], self::METHOD_GET, $filters);
     }
 
-    public function getStockHistory($idproduct_stock_history)
+    public function getStockHistory(int $idproduct_stock_history): array
     {
         return $this->sendRequest('/stockhistory/' . $idproduct_stock_history);
     }
 
-    public function getStockHistoryForProduct($idproduct, $offset = 0)
+    public function getStockHistoryForProduct(int $idproduct, int $offset = 0): array
     {
         return $this->getStockHistories(['idproduct' => $idproduct, 'offset' => $offset]);
     }
 
-    public function getStockHistoryForWarehouse($idwarehouse, $offset = 0)
+    public function getStockHistoryForWarehouse(int $idwarehouse, int $offset = 0): array
     {
         return $this->getStockHistories(['idwarehouse' => $idwarehouse, 'offset' => $offset]);
     }
@@ -360,22 +362,22 @@ class Client
     /*
      * Orders
      */
-    public function getOrders($filters = [])
+    public function getOrders(array $filters = []): array
     {
-        return $this->sendRequest('/orders', null, null, $filters);
+        return $this->sendRequest('/orders', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllOrders($filters = [])
+    public function getAllOrders(array $filters = []): array
     {
         return $this->getAllResults('order', $filters);
     }
 
-    public function getOrder($idorder)
+    public function getOrder(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder);
     }
 
-    public function getOrderByOrderid($orderid)
+    public function getOrderByOrderid(int $orderid): array
     {
         $result = $this->sendRequest('/orders?orderid=' . urlencode($orderid));
 
@@ -386,68 +388,68 @@ class Client
         return $result;
     }
 
-    public function addOrder($params)
+    public function addOrder(array $params): array
     {
         return $this->sendRequest('/orders', $params, self::METHOD_POST);
     }
 
-    public function cancelOrder($idorder, $params = [])
+    public function cancelOrder(int $idorder, array $params = []): array
     {
         return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_DELETE);
     }
 
-    public function getOrderProductStatus($idorder)
+    public function getOrderProductStatus(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/productstatus');
     }
 
-    public function getOrderBackorders($idorder)
+    public function getOrderBackorders(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/backorders');
     }
 
     /** @deprecated Use `processOrder`, still here for backwards compatibility */
-    public function closeOrder($idorder)
+    public function closeOrder(int $idorder): array
     {
         return $this->processOrder($idorder);
     }
 
-    public function processOrder($idorder)
+    public function processOrder(int $idorder): array
     {
-        return $this->sendRequest('/orders/' . $idorder . '/process', null, self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/process', [], self::METHOD_POST);
     }
 
-    public function processOrderBackorders($idorder)
+    public function processOrderBackorders(int $idorder): array
     {
-        return $this->sendRequest('/orders/' . $idorder . '/process-backorders', null, self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/process-backorders', [], self::METHOD_POST);
     }
-    
-    public function getOrderNotes($idorder)
+
+    public function getOrderNotes(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/notes');
     }
 
-    public function addOrderNote($idorder, $note)
+    public function addOrderNote(int $idorder, string $note): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/notes', ['note' => $note], self::METHOD_POST);
     }
 
-    public function addOrderComment($idorder, $params)
+    public function addOrderComment(int $idorder, array $params): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getOrderComments($idorder)
+    public function getOrderComments(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/comments');
     }
 
-    public function getOrderTags($idorder)
+    public function getOrderTags(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/tags');
     }
-    
-    public function createTag(string $title, string $color = '#823882', bool $inherit = false)
+
+    public function createTag(string $title, string $color = '#823882', bool $inherit = false): array
     {
         $params = [
             'title' => $title,
@@ -457,13 +459,13 @@ class Client
 
         return $this->sendRequest('/tags/', $params, self::METHOD_POST);
     }
-    
-    public function deleteTag(string $idtag)
+
+    public function deleteTag(string $idtag): array
     {
         return $this->sendRequest('/tags/'.$idtag, [], self::METHOD_DELETE);
     }
-    
-    public function addOrderTag($idorder, $idtag)
+
+    public function addOrderTag(int $idorder, int $idtag): array
     {
         $params = ['idtag' => $idtag];
 
@@ -471,70 +473,70 @@ class Client
     }
 
     /** @deprecated Use the `delete`, stays here for backwards compatibility */
-    public function removeOrderTag($idorder, $idtag)
+    public function removeOrderTag(int $idorder, int $idtag): void
     {
         $this->deleteOrderTag($idorder, $idtag);
     }
 
-    public function deleteOrderTag($idorder, $idtag)
+    public function deleteOrderTag(int $idorder, int $idtag): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/tags/' . $idtag, [], self::METHOD_DELETE);
     }
 
-    public function updateOrder($idorder, $params)
+    public function updateOrder(int $idorder, array $params): array
     {
         return $this->sendRequest('/orders/' . $idorder, $params, self::METHOD_PUT);
     }
 
-    public function getOrderFieldsOnOrder($idorder)
+    public function getOrderFieldsOnOrder(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/orderfields');
     }
 
-    public function updateOrderFieldOnOrder($idorder, $idorderfield, $value)
+    public function updateOrderFieldOnOrder(int $idorder, int $idorderfield, mixed $value): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, ['value' => $value], self::METHOD_PUT);
     }
 
-    public function deleteOrderFieldFromOrder($idorder, $idorderfield)
+    public function deleteOrderFieldFromOrder(int $idorder, int $idorderfield): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/orderfields/' . $idorderfield, [], self::METHOD_DELETE);
     }
 
-    public function allocateStockForOrder($idorder)
+    public function allocateStockForOrder(int $idorder): array
     {
-        return $this->sendRequest('/orders/' . $idorder . '/allocate', null, self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/allocate', [], self::METHOD_POST);
     }
 
-    public function deallocateStockForOrder($idorder)
+    public function deallocateStockForOrder(int $idorder): array
     {
-        return $this->sendRequest('/orders/' . $idorder . '/deallocate', null, self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/deallocate', [], self::METHOD_POST);
     }
 
-    public function prioritiseOrder($idorder)
+    public function prioritiseOrder(int $idorder): array
     {
-        return $this->sendRequest('/orders/' . $idorder . '/prioritise', null, self::METHOD_POST);
+        return $this->sendRequest('/orders/' . $idorder . '/prioritise', [], self::METHOD_POST);
     }
 
     /*
      * Picklists
      */
-    public function getPicklists($filters = [])
+    public function getPicklists(array $filters = []): array
     {
-        return $this->sendRequest('/picklists', null, null, $filters);
+        return $this->sendRequest('/picklists', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllPicklists($filters = [])
+    public function getAllPicklists(array $filters = []): array
     {
         return $this->getAllResults('picklist', $filters);
     }
 
-    public function getPicklist($idpicklist)
+    public function getPicklist(int $idpicklist): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist);
     }
 
-    public function getPicklistByPicklistid($picklistid)
+    public function getPicklistByPicklistid(int $picklistid): array
     {
         $result = $this->sendRequest('/picklists?picklistid=' . urlencode($picklistid));
 
@@ -545,22 +547,22 @@ class Client
         return $result;
     }
 
-    public function updatePicklist($idpicklist, $params)
+    public function updatePicklist(int $idpicklist, array $params): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist, $params, self::METHOD_PUT);
     }
 
-    public function closePicklist($idpicklist)
+    public function closePicklist(int $idpicklist): array
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/close', null, self::METHOD_POST);
+        return $this->sendRequest('/picklists/' . $idpicklist . '/close', [], self::METHOD_POST);
     }
 
-    public function cancelPicklist($idpicklist)
+    public function cancelPicklist(int $idpicklist): array
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/cancel', null, self::METHOD_POST);
+        return $this->sendRequest('/picklists/' . $idpicklist . '/cancel', [], self::METHOD_POST);
     }
 
-    public function pickProductOnPicklist($idpicklist, $product, $amount)
+    public function pickProductOnPicklist(int $idpicklist, string $product, int $amount): array
     {
         $params = [
             'product' => $product,
@@ -570,54 +572,54 @@ class Client
         return $this->sendRequest('/picklists/' . $idpicklist . '/pick', $params, self::METHOD_POST);
     }
 
-    public function pickallPicklist($idpicklist)
+    public function pickallPicklist(int $idpicklist): array
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/pickall', null, self::METHOD_POST);
+        return $this->sendRequest('/picklists/' . $idpicklist . '/pickall', [], self::METHOD_POST);
     }
 
-    public function assignPicklistToUser($idpicklist, $iduser)
+    public function assignPicklistToUser(int $idpicklist, int $iduser): array
     {
         $params = ['iduser' => $iduser];
         return $this->sendRequest('/picklists/' . $idpicklist . '/assign', $params, self::METHOD_POST);
     }
 
-    public function unassignPicklist($idpicklist)
+    public function unassignPicklist(int $idpicklist): array
     {
-        return $this->sendRequest('/picklists/' . $idpicklist . '/unassign', null, self::METHOD_POST);
+        return $this->sendRequest('/picklists/' . $idpicklist . '/unassign', [], self::METHOD_POST);
     }
 
-    public function snoozePicklist($idpicklist, $snooze_until = null)
+    public function snoozePicklist(int $idpicklist, ?string $snooze_until = null): array
     {
         $params = ['snooze_until' => $snooze_until];
         return $this->sendRequest('/picklists/' . $idpicklist . '/snooze', $params, self::METHOD_POST);
     }
 
-    public function createShipment($idpicklist, $params)
+    public function createShipment(int $idpicklist, array $params): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/shipments', $params, self::METHOD_POST);
     }
 
-    public function getShipments($idpicklist)
+    public function getShipments(int $idpicklist): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/shipments');
     }
 
-    public function getPicklistPdf($idpicklist)
+    public function getPicklistPdf(int $idpicklist): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/picklistpdf');
     }
 
-    public function getPackinglistPdf($idpicklist)
+    public function getPackinglistPdf(int $idpicklist): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/packinglistpdf');
     }
 
-    public function addPicklistComment($idpicklist, $params)
+    public function addPicklistComment(int $idpicklist, array $params): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getPicklistComments($idpicklist)
+    public function getPicklistComments(int $idpicklist): array
     {
         return $this->sendRequest('/picklists/' . $idpicklist . '/comments');
     }
@@ -625,17 +627,17 @@ class Client
     /*
      * Picklist batches
      */
-    public function getPicklistBatches($filters = [])
+    public function getPicklistBatches(array $filters = []): array
     {
-        return $this->sendRequest('/picklists/batches', null, null, $filters);
+        return $this->sendRequest('/picklists/batches', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllPicklistBatches($filters = [])
+    public function getAllPicklistBatches(array $filters = []): array
     {
         return $this->getAllResults('picklistBatch', $filters);
     }
 
-    public function getPicklistBatch($idpicklist_batch)
+    public function getPicklistBatch(int $idpicklist_batch): array
     {
         return $this->sendRequest('/picklists/batches/' . $idpicklist_batch);
     }
@@ -643,37 +645,37 @@ class Client
     /*
      * Suppliers
      */
-    public function getSuppliers($filters = [])
+    public function getSuppliers(array $filters = []): array
     {
-        return $this->sendRequest('/suppliers', null, null, $filters);
+        return $this->sendRequest('/suppliers', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllSuppliers($filters = [])
+    public function getAllSuppliers(array $filters = []): array
     {
         return $this->getAllResults('supplier', $filters);
     }
 
-    public function getSupplier($idsupplier)
+    public function getSupplier(int $idsupplier): array
     {
         return $this->sendRequest('/suppliers/' . $idsupplier);
     }
 
-    public function addSupplier($params)
+    public function addSupplier(array $params): array
     {
         return $this->sendRequest('/suppliers', $params, self::METHOD_POST);
     }
 
-    public function updateSupplier($idsupplier, $params)
+    public function updateSupplier(int $idsupplier, array $params): array
     {
         return $this->sendRequest('/suppliers/' . $idsupplier, $params, self::METHOD_PUT);
     }
 
-    public function addSupplierComment($idsupplier, $params)
+    public function addSupplierComment(int $idsupplier, array $params): array
     {
         return $this->sendRequest('/suppliers/' . $idsupplier . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getSupplierComments($idsupplier)
+    public function getSupplierComments(int $idsupplier): array
     {
         return $this->sendRequest('/suppliers/' . $idsupplier . '/comments');
     }
@@ -681,37 +683,37 @@ class Client
     /*
      * Purchase orders
      */
-    public function addPurchaseorder($params)
+    public function addPurchaseorder(array $params): array
     {
         return $this->sendRequest('/purchaseorders', $params, self::METHOD_POST);
     }
 
-    public function getPurchaseorders($filters = [])
+    public function getPurchaseorders(array $filters = []): array
     {
-        return $this->sendRequest('/purchaseorders', null, null, $filters);
+        return $this->sendRequest('/purchaseorders', [], self::METHOD_GET, $filters);
     }
 
-    public function getPurchaseorder($idpurchaseorder)
+    public function getPurchaseorder(int $idpurchaseorder): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder);
     }
 
-    public function markPurchaseorderAsPurchased($idpurchaseorder)
+    public function markPurchaseorderAsPurchased(int $idpurchaseorder): array
     {
-        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/mark-as-purchased', null, self::METHOD_POST);
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/mark-as-purchased', [], self::METHOD_POST);
     }
 
-    public function cancelPurchaseorder($idpurchaseorder)
+    public function cancelPurchaseorder(int $idpurchaseorder): array
     {
-        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/cancel', null, self::METHOD_POST);
+        return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/cancel', [], self::METHOD_POST);
     }
 
-    public function getPurchaseorderProducts($idpurchaseorder)
+    public function getPurchaseorderProducts(int $idpurchaseorder): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products');
     }
 
-    public function addProductToPurchaseorder($idpurchaseorder, $idproduct, $amount, $price = null, $deliverydate = null)
+    public function addProductToPurchaseorder(int $idpurchaseorder, int $idproduct, int $amount, ?float $price = null, ?string $deliverydate = null): array
     {
         $params = [
             'idproduct' => $idproduct,
@@ -729,42 +731,42 @@ class Client
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products', $params, self::METHOD_POST);
     }
 
-    public function updatePurchaseorderProduct($idpurchaseorder, $idpurchaseorder_product, $params)
+    public function updatePurchaseorderProduct(int $idpurchaseorder, int $idpurchaseorder_product, array $params): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products/' . $idpurchaseorder_product, $params, self::METHOD_PUT);
     }
 
-    public function removePurchaseorderProduct($idpurchaseorder, $idpurchaseorder_product)
+    public function removePurchaseorderProduct(int $idpurchaseorder, int $idpurchaseorder_product): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/products/' . $idpurchaseorder_product, [], self::METHOD_DELETE);
     }
 
-    public function getReceiptsFromPurchaseorder($idpurchaseorder)
+    public function getReceiptsFromPurchaseorder(int $idpurchaseorder): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts');
     }
 
-    public function getReceiptFromPurchaseorder($idpurchaseorder, $idreceipt)
+    public function getReceiptFromPurchaseorder(int $idpurchaseorder, int $idreceipt): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts/' . $idreceipt);
     }
 
-    public function addReceiptToPurchaseorder($idpurchaseorder, $params)
+    public function addReceiptToPurchaseorder(int $idpurchaseorder, array $params): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/receipts', $params, self::METHOD_POST);
     }
 
-    public function updatePurchaseorder($idpurchaseorder, $params)
+    public function updatePurchaseorder(int $idpurchaseorder, array $params): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder, $params, self::METHOD_PUT);
     }
 
-    public function addPurchaseorderComment($idpurchaseorder, $params)
+    public function addPurchaseorderComment(int $idpurchaseorder, array $params): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getPurchaseorderComments($idpurchaseorder)
+    public function getPurchaseorderComments(int $idpurchaseorder): array
     {
         return $this->sendRequest('/purchaseorders/' . $idpurchaseorder . '/comments');
     }
@@ -773,12 +775,12 @@ class Client
      * New receipt endpoints have not added yet, so added it below purchase orders for now
      */
 
-    public function addReceiptComment($idreceipt, $params)
+    public function addReceiptComment(int $idreceipt, array $params): array
     {
         return $this->sendRequest('/receipts/' . $idreceipt . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getReceiptComments($idreceipt)
+    public function getReceiptComments(int $idreceipt): array
     {
         return $this->sendRequest('/receipts/' . $idreceipt . '/comments');
     }
@@ -787,68 +789,68 @@ class Client
      * Returns
      */
 
-    public function getReturns($filters = [])
+    public function getReturns(array $filters = []): array
     {
-        return $this->sendRequest('/returns', null, null, $filters);
+        return $this->sendRequest('/returns', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllReturns($filters = [])
+    public function getAllReturns(array $filters = []): array
     {
         return $this->getAllResults('return', $filters);
     }
 
-    public function getReturn($idreturn)
+    public function getReturn(int $idreturn): array
     {
         return $this->sendRequest('/returns/' . $idreturn);
     }
 
-    public function addReturn($params)
+    public function addReturn(array $params): array
     {
         return $this->sendRequest('/returns', $params, self::METHOD_POST);
     }
 
-    public function updateReturn($idreturn, $params)
+    public function updateReturn(int $idreturn, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn, $params, self::METHOD_PUT);
     }
 
-    public function getReturnLogAndComments($idreturn)
+    public function getReturnLogAndComments(int $idreturn): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/logs');
     }
 
-    public function addReturnLogOrChangeStatus($idreturn, $params)
+    public function addReturnLogOrChangeStatus(int $idreturn, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/logs', $params, self::METHOD_POST);
 
     }
-    
-    public function getReturnStatuses()
+
+    public function getReturnStatuses(): array
     {
         return $this->sendRequest('/return_statuses');
     }
 
-    public function getAllReturnStatuses($filters = [])
+    public function getAllReturnStatuses(array $filters = []): array
     {
         return $this->getAllResults('returnStatuse');
     }
 
-    public function getReturnReasons()
+    public function getReturnReasons(): array
     {
         return $this->sendRequest('/return_reasons');
     }
 
-    public function getAllReturnReasons($filters = [])
+    public function getAllReturnReasons(array $filters = []): array
     {
         return $this->getAllResults('returnReason');
     }
 
-    public function addReturnComment($idreturn, $params)
+    public function addReturnComment(int $idreturn, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/comments', $params, self::METHOD_POST);
     }
 
-    public function getReturnComments($idreturn)
+    public function getReturnComments(int $idreturn): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/comments');
     }
@@ -857,27 +859,27 @@ class Client
      * Returned Products
      */
 
-    public function getReturnedProducts($idreturn)
+    public function getReturnedProducts(int $idreturn): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/returned_products');
     }
 
-    public function addReturnedProducts($idreturn, $params)
+    public function addReturnedProducts(int $idreturn, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/returned_products', $params, self::METHOD_POST);
     }
 
-    public function updateReturnedProduct($idreturn, $idreturn_product, $params)
+    public function updateReturnedProduct(int $idreturn, int $idreturn_product, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/returned_products/' . $idreturn_product, $params, self::METHOD_PUT);
     }
 
-    public function removeReturnedProduct($idreturn, $idreturn_product)
+    public function removeReturnedProduct(int $idreturn, int $idreturn_product): array
     {
-        return $this->sendRequest('/returns/' . $idreturn . '/returned_products/' . $idreturn_product, null,self::METHOD_DELETE);
+        return $this->sendRequest('/returns/' . $idreturn . '/returned_products/' . $idreturn_product, [], self::METHOD_DELETE);
     }
 
-    public function receiveReturnedProducts($idreturn, $params)
+    public function receiveReturnedProducts(int $idreturn, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/receive', $params, self::METHOD_POST);
     }
@@ -886,40 +888,40 @@ class Client
      * Replacement Products
      */
 
-    public function getReplacementProducts($idreturn)
+    public function getReplacementProducts(int $idreturn): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/replacement_products');
     }
 
-    public function addReplacementProducts($idreturn, $params)
+    public function addReplacementProducts(int $idreturn, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/replacement_products', $params, self::METHOD_POST);
     }
 
-    public function updateReplacementProduct($idreturn, $idreturn_product_replacement, $params)
+    public function updateReplacementProduct(int $idreturn, int $idreturn_product_replacement, array $params): array
     {
         return $this->sendRequest('/returns/' . $idreturn . '/replacement_products/' . $idreturn_product_replacement, $params, self::METHOD_PUT);
     }
 
-    public function removeReplacementProduct($idreturn, $idreturn_product_replacement)
+    public function removeReplacementProduct(int $idreturn, int $idreturn_product_replacement): array
     {
-        return $this->sendRequest('/returns/' . $idreturn . '/replacement_products/' . $idreturn_product_replacement, null,self::METHOD_DELETE);
+        return $this->sendRequest('/returns/' . $idreturn . '/replacement_products/' . $idreturn_product_replacement, [], self::METHOD_DELETE);
     }
 
     /*
      * Tags
      */
-    public function getTags($filters = [])
+    public function getTags(array $filters = []): array
     {
         return $this->sendRequest('/tags', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllTags($filters = [])
+    public function getAllTags(array $filters = []): array
     {
         return $this->getAllResults('tag', $filters);
     }
 
-    public function getTag($idtag)
+    public function getTag(int $idtag): array
     {
         return $this->sendRequest('/tags/' . $idtag);
     }
@@ -927,12 +929,12 @@ class Client
     /*
      * VAT Groups
      */
-    public function getVatgroups()
+    public function getVatgroups(): array
     {
         return $this->sendRequest('/vatgroups');
     }
 
-    public function getVatgroup($idvatgroup)
+    public function getVatgroup(int $idvatgroup): array
     {
         return $this->sendRequest('/vatgroups/' . $idvatgroup);
     }
@@ -940,22 +942,22 @@ class Client
     /*
      * Hooks
      */
-    public function getHooks()
+    public function getHooks(): array
     {
         return $this->sendRequest('/hooks');
     }
 
-    public function getHook($id)
+    public function getHook(int $id): array
     {
         return $this->sendRequest('/hooks/' . $id);
     }
 
-    public function addHook($params)
+    public function addHook(array $params): array
     {
         return $this->sendRequest('/hooks', $params, self::METHOD_POST);
     }
 
-    public function deleteHook($id)
+    public function deleteHook(int $id): array
     {
         return $this->sendRequest('/hooks/' . $id, [], self::METHOD_DELETE);
     }
@@ -963,27 +965,27 @@ class Client
     /*
      * Backorders
      */
-    public function getBackorders($filters = [])
+    public function getBackorders(array $filters = []): array
     {
-        return $this->sendRequest('/backorders', null, null, $filters);
+        return $this->sendRequest('/backorders', [], self::METHOD_GET, $filters);
     }
 
-    public function getBackorder($idbackorder)
+    public function getBackorder(int $idbackorder): array
     {
         return $this->sendRequest('/backorders/' . $idbackorder);
     }
 
-    public function processBackorders()
+    public function processBackorders(): array
     {
-        return $this->sendRequest('/backorders/process', null, self::METHOD_POST);
+        return $this->sendRequest('/backorders/process', [], self::METHOD_POST);
     }
 
-    public function deleteBackorder($idbackorder)
+    public function deleteBackorder(int $idbackorder): array
     {
-        return $this->sendRequest('/backorders/' . $idbackorder, null, self::METHOD_DELETE);
+        return $this->sendRequest('/backorders/' . $idbackorder, [], self::METHOD_DELETE);
     }
 
-    public function getBackordersForOrder($idorder)
+    public function getBackordersForOrder(int $idorder): array
     {
         return $this->sendRequest('/orders/' . $idorder . '/backorders');
     }
@@ -991,12 +993,12 @@ class Client
     /*
      * Warehouses
      */
-    public function getWarehouses()
+    public function getWarehouses(): array
     {
         return $this->sendRequest('/warehouses');
     }
 
-    public function getWarehouse($idwarehouse)
+    public function getWarehouse(int $idwarehouse): array
     {
         return $this->sendRequest('/warehouses/' . $idwarehouse);
     }
@@ -1004,12 +1006,12 @@ class Client
     /*
      * Pricelists
      */
-    public function getPricelists()
+    public function getPricelists(): array
     {
         return $this->sendRequest('/pricelists');
     }
 
-    public function getPricelist($idpricelist)
+    public function getPricelist(int $idpricelist): array
     {
         return $this->sendRequest('/pricelists/' . $idpricelist);
     }
@@ -1017,7 +1019,7 @@ class Client
     /*
      * Shipping providers
      */
-    public function getShippingProviders()
+    public function getShippingProviders(): array
     {
         return $this->sendRequest('/shippingproviders');
     }
@@ -1025,12 +1027,12 @@ class Client
     /*
      * Product fields
      */
-    public function getProductFields()
+    public function getProductFields(): array
     {
         return $this->sendRequest('/productfields');
     }
 
-    public function getProductField($idproductfield)
+    public function getProductField(int $idproductfield): array
     {
         return $this->sendRequest('/productfields/' . $idproductfield);
     }
@@ -1038,12 +1040,12 @@ class Client
     /*
      * Order fields
      */
-    public function getOrderFields()
+    public function getOrderFields(): array
     {
         return $this->sendRequest('/orderfields');
     }
 
-    public function getOrderField($idorderfield)
+    public function getOrderField(int $idorderfield): array
     {
         return $this->sendRequest('/orderfields/' . $idorderfield);
     }
@@ -1051,12 +1053,12 @@ class Client
     /*
      * Customer fields
      */
-    public function getCustomerFields()
+    public function getCustomerFields(): array
     {
         return $this->sendRequest('/customerfields');
     }
 
-    public function getCustomerField($idcustomerfield)
+    public function getCustomerField(int $idcustomerfield): array
     {
         return $this->sendRequest('/customerfields/' . $idcustomerfield);
     }
@@ -1064,22 +1066,22 @@ class Client
     /*
      * Users
      */
-    public function getUsers($filters = [])
+    public function getUsers(array $filters = []): array
     {
         return $this->sendRequest('/users', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllUsers($filters = array())
+    public function getAllUsers(array $filters = []): array
     {
         return $this->getAllResults('user', $filters);
     }
 
-    public function getUser($iduser)
+    public function getUser(int $iduser): array
     {
         return $this->sendRequest('/users/' . $iduser);
     }
 
-    public function getCurrentUser()
+    public function getCurrentUser(): array
     {
         return $this->getUser('me');
     }
@@ -1087,7 +1089,7 @@ class Client
     /*
      * Templates
      */
-    public function getTemplates()
+    public function getTemplates(): array
     {
         return $this->sendRequest('/templates');
     }
@@ -1095,42 +1097,42 @@ class Client
     /*
      * Locations
      */
-    public function getLocations($filters = [])
+    public function getLocations(array $filters = []): array
     {
         return $this->sendRequest('/locations', [], self::METHOD_GET, $filters);
     }
 
-    public function getAllLocations($filters = array())
+    public function getAllLocations(array $filters = []): array
     {
         return $this->getAllResults('location', $filters);
     }
 
-    public function getLocation($id)
+    public function getLocation(int $id): array
     {
         return $this->sendRequest('/locations/' . $id);
     }
 
-    public function addLocation($params, $autoLinkToParent = false)
+    public function addLocation(array $params, bool $autoLinkToParent = false): array
     {
         return $this->sendRequest('/locations', $params, self::METHOD_POST, ['auto_link_to_parent' => $autoLinkToParent]);
     }
 
-    public function updateLocation($id, $params)
+    public function updateLocation(int $id, array $params): array
     {
         return $this->sendRequest('/locations/' . $id, $params, self::METHOD_PUT);
     }
 
-    public function deleteLocation($id)
+    public function deleteLocation(int $id): array
     {
         return $this->sendRequest('/locations/' . $id, [], self::METHOD_DELETE);
     }
 
-    public function getProductsOnLocation($id)
+    public function getProductsOnLocation(int $id): array
     {
         return $this->sendRequest('/locations/' . $id . '/products', [], self::METHOD_GET);
     }
 
-    public function getAllProductsOnLocation($id)
+    public function getAllProductsOnLocation(int $id): array
     {
         return $this->getAllResults('/locations/' . $id . '/products');
     }
@@ -1138,12 +1140,12 @@ class Client
     /*
      * Stats
      */
-    public function getStats()
+    public function getStats(): array
     {
         return $this->sendRequest('/stats');
     }
 
-    public function getStat($key)
+    public function getStat(int $key): array
     {
         return $this->sendRequest('/stats/' . $key);
     }
@@ -1152,17 +1154,17 @@ class Client
     * Comments
     */
 
-    public function getComments($filters = [])
+    public function getComments(array $filters = []): array
     {
         return $this->sendRequest('/comments', [], self::METHOD_GET, $filters);
     }
-    
-    public function getComment($idcomment)
+
+    public function getComment(int $idcomment): array
     {
         return $this->sendRequest('/comments/' . $idcomment, [], self::METHOD_GET);
     }
 
-    public function deleteComment($idcomment)
+    public function deleteComment(int $idcomment): array
     {
         return $this->sendRequest('/comments/' . $idcomment, [], self::METHOD_DELETE);
     }
@@ -1190,7 +1192,7 @@ class Client
             $filters['offset'] = ($i * 100);
 
             if ($mode === 'byEndpoint') {
-                $result = $this->sendRequest($baseEndpoint, null, null, $filters);
+                $result = $this->sendRequest($baseEndpoint, [], self::METHOD_GET, $filters);
             } else {
                 $result = $this->$methodName($filters);
             }
@@ -1215,7 +1217,7 @@ class Client
      * Yield all results from the API
      * @throws Exception
      */
-    public function getResultGenerator(string $entity, $filters = [])
+    public function getResultGenerator(string $entity, array $filters = [])
     {
         $methodName = $this->getEntityGetterMethodName($entity);
 
@@ -1245,7 +1247,7 @@ class Client
      * Creates a new company account for Picqer
      * @throws RateLimitException
      */
-    public function addCompany($params)
+    public function addCompany(array $params): array
     {
         return $this->sendRequest('/companies', $params, self::METHOD_POST);
     }
@@ -1300,7 +1302,7 @@ class Client
     /**
      * @throws RateLimitException
      */
-    public function sendRequest($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
+    public function sendRequest(string $endpoint, array $params = [], string $method = self::METHOD_GET, array $filters = []): array
     {
         $url = $this->getUrl($endpoint, $filters);
 
@@ -1391,12 +1393,12 @@ class Client
         return $result;
     }
 
-    protected function prepareData($params): bool|string
+    protected function prepareData(array $params): bool|string
     {
         return json_encode($params);
     }
 
-    protected function debug($message): void
+    protected function debug(string $message): void
     {
         if ($this->debug) {
             echo 'Debug: ' . $message . PHP_EOL;
@@ -1430,7 +1432,7 @@ class Client
         return (array_key_exists('x-ratelimit-remaining', $apiResultHeaders)) ? $apiResultHeaders['x-ratelimit-remaining'] : null;
     }
 
-    protected function setPostData($curlSession, $method, $params): void
+    protected function setPostData(CurlHandle $curlSession, string $method, array $params = []): void
     {
         if (! in_array($method, [self::METHOD_POST, self::METHOD_PUT, self::METHOD_DELETE])) {
             return;
@@ -1443,7 +1445,7 @@ class Client
         curl_setopt($curlSession, CURLOPT_POSTFIELDS, $data);
     }
 
-    protected function setSslVerification($curlSession): void
+    protected function setSslVerification(CurlHandle $curlSession): void
     {
         if ($this->skipSslVerification) {
             curl_setopt($curlSession, CURLOPT_SSL_VERIFYPEER, false);
@@ -1454,7 +1456,7 @@ class Client
     /**
      * @throws RateLimitException
      */
-    protected function handleRateLimitReached($endpoint, $params = [], $method = self::METHOD_GET, $filters = [])
+    protected function handleRateLimitReached(string $endpoint, array $params = [], string $method = self::METHOD_GET, array $filters = [])
     {
         if (! $this->waitOnRateLimit) {
             throw new RateLimitException('Rate limit exceeded. Try again later.');
